@@ -4,9 +4,9 @@ function Use-VS2019 {
     )
     <#
   .SYNOPSIS
-      Load the build enviroment for Visul Studio 2019
+      Load the build enviroment for Visual Studio 2019
   .DESCRIPTION
-      Load the build enviroment for Visul Studio 2019 using the Visual Studio 2019 development settings.
+      Load the build enviroment for Visual Studio 2019 using the Visual Studio 2019 development settings.
   .EXAMPLE
       Use-VS2019
   #>

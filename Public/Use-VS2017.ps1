@@ -1,9 +1,9 @@
 function Use-VS2017 {
     <#
     .SYNOPSIS
-        Load the build enviroment for Visul Studio 2017
+        Load the build enviroment for Visual Studio 2017
     .DESCRIPTION
-        Load the build enviroment for Visul Studio 2017 using the Visual Studio 2017 development settings.
+        Load the build enviroment for Visual Studio 2017 using the Visual Studio 2017 development settings.
     .EXAMPLE
         Use-VS2017
     #>

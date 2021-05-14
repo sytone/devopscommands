@@ -84,7 +84,7 @@ Update-ModuleManifest @Params
 # Create new markdown and XML help files
 Write-Information "Building new function documentation"
 Import-Module -Name "$PSScriptRoot\$moduleName.psm1" -Force
-Get-Module $moduleName
+Get-Module $moduleName | Out-Null
 Write-Information "Updating markdown based help"
 New-MarkdownHelp -Module $moduleName -OutputFolder .\docs -ErrorAction SilentlyContinue
 Update-MarkdownHelp "$PSScriptRoot\docs"
@@ -92,12 +92,21 @@ Write-Information "Building new xml file for help"
 New-ExternalHelp -Path "$PSScriptRoot\docs" -OutputPath "$PSScriptRoot\en-US\" -Force
 
 # Package for Publish
-New-Item -Path ./publish -ItemType Directory -Force -ErrorAction SilentlyContinue | Out-Null
-Copy-Item -Path ./docs -Destination ./publish/docs -Recurse
+Get-ChildItem $PSScriptRoot/publish -Recurse -File | Remove-Item -Force
+Get-ChildItem $PSScriptRoot/publish -Recurse -Directory | Remove-Item -Force
+New-Item -Path $PSScriptRoot/publish -ItemType Directory -Force -ErrorAction SilentlyContinue | Out-Null
+Copy-Item -Path $PSScriptRoot/docs -Destination $PSScriptRoot/publish/ -Recurse
+Copy-Item -Path $PSScriptRoot/en-US -Destination $PSScriptRoot/publish/ -Recurse
+Copy-Item -Path $PSScriptRoot/Public -Destination $PSScriptRoot/publish/ -Recurse
+Copy-Item -Path $PSScriptRoot/Private -Destination $PSScriptRoot/publish/ -Recurse
+Copy-Item -Path $PSScriptRoot/$moduleName.psd1 -Destination $PSScriptRoot/publish/ -Recurse
+Copy-Item -Path $PSScriptRoot/$moduleName.psm1 -Destination $PSScriptRoot/publish/ -Recurse
+Copy-Item -Path $PSScriptRoot/README.md -Destination $PSScriptRoot/publish/ -Recurse
+Copy-Item -Path $PSScriptRoot/LICENSE -Destination $PSScriptRoot/publish/ -Recurse
 
 return
 
 if (Get-Command -Name "Get-SimpleSetting") {
     $publishKey = Get-SimpleSetting -Section "PowerShellGallery" -Name "DefaultApiKey"
-    Publish-Module -Path "." -NuGetApiKey $publishKey
+    Publish-Module -Path "$PSScriptRoot/publish" -NuGetApiKey $publishKey
 }
