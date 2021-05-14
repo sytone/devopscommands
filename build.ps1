@@ -2,7 +2,11 @@
 param(
     # The version of the output module
     [Alias("ModuleVersion")]
-    [string]$SemVer
+    [string]$SemVer,
+
+    [Switch]
+    $Publish
+
 )
 
 $buildconfiguration = Get-Content "$PSScriptRoot\module_config.json" | ConvertFrom-Json
@@ -92,21 +96,20 @@ Write-Information "Building new xml file for help"
 New-ExternalHelp -Path "$PSScriptRoot\docs" -OutputPath "$PSScriptRoot\en-US\" -Force
 
 # Package for Publish
-Get-ChildItem $PSScriptRoot/publish -Recurse -File | Remove-Item -Force
-Get-ChildItem $PSScriptRoot/publish -Recurse -Directory | Remove-Item -Force
-New-Item -Path $PSScriptRoot/publish -ItemType Directory -Force -ErrorAction SilentlyContinue | Out-Null
-Copy-Item -Path $PSScriptRoot/docs -Destination $PSScriptRoot/publish/ -Recurse
-Copy-Item -Path $PSScriptRoot/en-US -Destination $PSScriptRoot/publish/ -Recurse
-Copy-Item -Path $PSScriptRoot/Public -Destination $PSScriptRoot/publish/ -Recurse
-Copy-Item -Path $PSScriptRoot/Private -Destination $PSScriptRoot/publish/ -Recurse
-Copy-Item -Path $PSScriptRoot/$moduleName.psd1 -Destination $PSScriptRoot/publish/ -Recurse
-Copy-Item -Path $PSScriptRoot/$moduleName.psm1 -Destination $PSScriptRoot/publish/ -Recurse
-Copy-Item -Path $PSScriptRoot/README.md -Destination $PSScriptRoot/publish/ -Recurse
-Copy-Item -Path $PSScriptRoot/LICENSE -Destination $PSScriptRoot/publish/ -Recurse
+Get-ChildItem "$PSScriptRoot/publish" -Recurse -File | Remove-Item -Force -Recurse
+Get-ChildItem $PSScriptRoot/publish/$moduleName/ -Recurse -Directory | Remove-Item -Force -Recurse
+Get-ChildItem $PSScriptRoot/publish -Recurse -Directory | Remove-Item -Force -Recurse
+New-Item -Path $PSScriptRoot/publish/$moduleName -ItemType Directory -Force -ErrorAction SilentlyContinue | Out-Null
+Copy-Item -Path $PSScriptRoot/docs -Destination $PSScriptRoot/publish/$moduleName/ -Recurse
+Copy-Item -Path $PSScriptRoot/en-US -Destination $PSScriptRoot/publish/$moduleName/ -Recurse
+Copy-Item -Path $PSScriptRoot/Public -Destination $PSScriptRoot/publish/$moduleName/ -Recurse
+Copy-Item -Path $PSScriptRoot/Private -Destination $PSScriptRoot/publish/$moduleName/ -Recurse
+Copy-Item -Path $PSScriptRoot/$moduleName.psd1 -Destination $PSScriptRoot/publish/$moduleName/ -Recurse
+Copy-Item -Path $PSScriptRoot/$moduleName.psm1 -Destination $PSScriptRoot/publish/$moduleName/ -Recurse
+Copy-Item -Path $PSScriptRoot/README.md -Destination $PSScriptRoot/publish/$moduleName/ -Recurse
+Copy-Item -Path $PSScriptRoot/LICENSE -Destination $PSScriptRoot/publish/$moduleName/ -Recurse
 
-return
-
-if (Get-Command -Name "Get-SimpleSetting") {
+if ((Get-Command -Name "Get-SimpleSetting") -and $Publish) {
     $publishKey = Get-SimpleSetting -Section "PowerShellGallery" -Name "DefaultApiKey"
-    Publish-Module -Path "$PSScriptRoot/publish" -NuGetApiKey $publishKey
+    Publish-Module -Path "$PSScriptRoot/publish/$moduleName" -NuGetApiKey $publishKey
 }
