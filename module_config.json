@@ -1,0 +1,9 @@
+{
+    "ModuleName":"DevOpsCommands",
+    "Author": "Jon Bullen",
+    "CompanyName": "Sytone Inc.",
+    "Description": "Command commands and utilities used to make development in PowerShell simpler with msbuild",
+    "LicenseUri": "https://github.com/sytone/devopscommands",
+    "ProjectUri": "https://github.com/sytone/devopscommands",
+    "RequiredModules": ["SimpleSettings"]
+}
