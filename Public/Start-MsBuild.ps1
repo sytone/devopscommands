@@ -34,7 +34,9 @@ function Start-MSBuild {
         [Switch] $Restore,
         [Switch] $CleanNugetCache,
         [Switch] $Release,
-        $AdditionalArguments = @()
+        [Switch] $Nuke,
+        $AdditionalArguments = @(),
+        $NukeFolders = @("bin", "obj", "node_modules", "out")
     )
 
     begin {
@@ -44,6 +46,7 @@ function Start-MSBuild {
         Write-Information "   Default Build Arguments: $msBuildArguments"
         Write-Information "Structured Log Viewer Path: $StructuredLogViewerPath"
         if ($LogToConsole) { Write-Information "- Logging to Console Enabled" }
+        if ($Nuke) { Write-Information "- Removing all folders called ($($NukeFolders -join ","))" }
         if ($Clean) { Write-Information "- Clean Enabled" }
         if ($Restore) { Write-Information "- Restore Enabled" }
         if ($CleanNugetCache) { Write-Information "- Clean Nuget Cache Enabled" }
@@ -83,23 +86,40 @@ function Start-MSBuild {
             Write-Information "Unable to find msbuild.exe in your PATH, loading VS $vsDefault"
         }
         else {
+
             if ($CleanNugetCache) {
+                Write-Information "Cleaning the NUGET Cache"
                 if ($PSCmdlet.ShouldProcess("Start-Process", "dotnet nuget locals all --clear")) {
                     Start-Process -FilePath dotnet  -ArgumentList ('nuget', 'locals', 'all', '--clear') -NoNewWindow -Wait
                 }
             }
+
+            if ($Nuke) {
+                Write-Information "Deleteing folders $($NukeFolders -join ",") "
+                if ($PSCmdlet.ShouldProcess("Start-Process", "Get-ChildItem ./ -include $($NukeFolders -join ",") -Recurse | ForEach-Object { [IO.Directory]::Delete(`$_.FullName, `$true) }")) {
+                    Get-ChildItem ./ -include $NukeFolders -Recurse | ForEach-Object { [IO.Directory]::Delete($_.FullName, $true) }
+                }
+            }
+
             if ($Restore) {
+                Write-Information "Running restore target"
                 if ($PSCmdlet.ShouldProcess("Start-Process", "msbuild $msBuildArgumentsUsed /t:`"Restore`"")) {
-                    Start-Process -FilePath msbuild -ArgumentList ($msBuildArgumentsUsed + '/t:"Restore"') -NoNewWindow -Wait
+                    Start-Process -FilePath msbuild -ArgumentList ($msBuildArgumentsUsed.Replace("/binaryLogger", "/binaryLogger:restore.binlog") + '/t:"Restore"') -NoNewWindow -Wait
                 }
             }
+
             if ($Clean) {
+                Write-Information "Running clean target"
                 if ($PSCmdlet.ShouldProcess("Start-Process", "msbuild $msBuildArgumentsUsed /t:`"Clean`"")) {
-                    Start-Process -FilePath msbuild -ArgumentList ($msBuildArgumentsUsed + '/t:"Clean"') -NoNewWindow -Wait
+                    Start-Process -FilePath msbuild -ArgumentList ($msBuildArgumentsUsed.Replace("/binaryLogger", "/binaryLogger:clean.binlog") + '/t:"Clean"') -NoNewWindow -Wait
                 }
             }
+
+            Write-Information "Running build target"
             if ($PSCmdlet.ShouldProcess("Start-Process", "msbuild $msBuildArgumentsUsed'")) {
-                Start-Process -FilePath msbuild -ArgumentList $msBuildArgumentsUsed -NoNewWindow -Wait
+                $buildProcess = Start-Process -FilePath msbuild -ArgumentList $msBuildArgumentsUsed -NoNewWindow -PassThru
+                Wait-Process -InputObject $buildProcess
+                if ($buildProcess.ExitCode -gt 0) { Write-Error "MSBuild returned error code $($buildProcess.ExitCode)" }
             }
         }
         $sw.Stop()
