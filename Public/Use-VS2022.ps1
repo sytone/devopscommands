@@ -34,14 +34,17 @@ function Use-VS2022 {
         if (-not (Test-Path (Split-Path $shellPath -Parent))) {
             $completedSucessfully = $false
         }
+        else {
 
-        Push-Location (Split-Path $shellPath -Parent)
-        Write-Information "`n------------------------------------------------------------"
-        Write-Information " * Setting up environment..."
-        Write-Information "   - Visual Studio 2022 ($version) Command Prompt processing."
-        & $shellPath
-        Pop-Location
-        Write-Information "   - Visual Studio 2022 ($version) Command Prompt variables set."
+            Push-Location (Split-Path $shellPath -Parent)
+            Write-Information "`n------------------------------------------------------------"
+            Write-Information " * Setting up environment..."
+            Write-Information "   - Visual Studio 2022 ($version) Command Prompt processing."
+            & $shellPath
+            Pop-Location
+            Write-Information "   - Visual Studio 2022 ($version) Command Prompt variables set."
+            $completedSucessfully = $true
+        }
 
     }
 
