@@ -21,10 +21,17 @@ function Use-VS2019 {
         else {
             $version = "Enterprise"
         }
+
+        $shellPath = "C:\Program Files (x86)\Microsoft Visual Studio\2019\$version\Common7\Tools"
+
+        if(-not (Test-Path (Split-Path $shellPath -Parent))) {
+            exit 1
+        }
+
         Write-Information "`n------------------------------------------------------------"
         Write-Information " * Setting up environment..."
         Write-Information "   - Visual Studio 2019 ($version) Command Prompt processing."
-        Push-Location "C:\Program Files (x86)\Microsoft Visual Studio\2019\$version\Common7\Tools"
+        Push-Location $shellPath
         cmd /c "VsDevCmd.bat&set" |
         ForEach-Object {
             if ($_ -match "=") {

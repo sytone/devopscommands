@@ -13,8 +13,8 @@ Runs MBuild with binary logging enabled by default
 ## SYNTAX
 
 ```
-Start-MSBuild [-LogToConsole] [-Clean] [-Restore] [-CleanNugetCache] [-Release]
- [[-AdditionalArguments] <Object>] [-WhatIf] [-Confirm] [<CommonParameters>]
+Start-MSBuild [-LogToConsole] [-Clean] [-Restore] [-CleanNugetCache] [-Release] [-Nuke]
+ [[-AdditionalArguments] <Object>] [[-NukeFolders] <Object>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -105,6 +105,21 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -Nuke
+{{ Fill Nuke Description }}
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -AdditionalArguments
 Allows you to add additional arguments to the msbuild command.
 
@@ -116,6 +131,21 @@ Aliases:
 Required: False
 Position: 1
 Default value: @()
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -NukeFolders
+{{ Fill NukeFolders Description }}
+
+```yaml
+Type: Object
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 2
+Default value: @("bin", "obj", "node_modules", "out")
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

@@ -75,7 +75,15 @@ function Start-MSBuild {
 
         $msBuildArgumentsUsed += $AdditionalArguments
         if ($null -eq (Get-Command "msbuild.exe" -ErrorAction SilentlyContinue)) {
+            Write-Information "Unable to find msbuild.exe in your PATH, loading VS $vsDefault"
             switch ($vsDefault) {
+                "17" {
+                    $completed = Use-VS2022
+                    if($completed -ne $true) {
+                        # Fall back to 19.
+                        Use-VS2019
+                    }
+                 }
                 "16" { Use-VS2019 }
                 "15" { Use-VS2017 }
                 Default { Use-VS2019 }
@@ -83,7 +91,7 @@ function Start-MSBuild {
         }
 
         if ($null -eq (Get-Command "msbuild.exe" -ErrorAction SilentlyContinue)) {
-            Write-Information "Unable to find msbuild.exe in your PATH, loading VS $vsDefault"
+            Write-Information "Unable to find msbuild.exe in your PATH, unable to build."
         }
         else {
 

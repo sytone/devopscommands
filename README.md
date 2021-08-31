@@ -1,6 +1,6 @@
 <div align="center">
 
-![Logo](./images/settings_icon.png "Logo")
+![Logo.](./images/settings_icon.png "Logo")
 
 # Simple Settings
 
@@ -33,13 +33,13 @@ Simple setting solution for PowerShell and beyond!
 
 ## About The Project
 
-[![DevOps Commands Screen Shot][./images/screenshot.png]](https://github.com/sytone/devopscommands)
+[![DevOps Commands Screen Shot.][./images/screenshot.png]](https://github.com/sytone/devopscommands)
 
 To make development simpler in PowerShell using MSBuild this module wraps the commands and defaults to the binary logger which provides far better log output for looking at builds.
 
 ### Built With
 
-- [PowerShell Core](https://docs.microsoft.com/en-us/powershell/)
+- [PowerShell Core](https://docs.microsoft.com/powershell/)
 - [Visual Studio Code](https://code.visualstudio.com/)
 
 ## Getting Started
