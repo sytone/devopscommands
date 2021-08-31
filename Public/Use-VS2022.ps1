@@ -12,6 +12,7 @@ function Use-VS2022 {
   #>
     begin {
         Write-Information (Get-ModuleHeaderInfo)
+        $completedSucessfully = $false
     }
 
     process {
@@ -25,13 +26,13 @@ function Use-VS2022 {
         $version = "Enterprise"
         $shellPath = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\Launch-VsDevShell.ps1"
 
-        if(!(Test-Path $shellPath)) {
+        if (!(Test-Path $shellPath)) {
             $shellPath = "C:\Program Files\Microsoft Visual Studio\2022\Preview\Common7\Tools\Launch-VsDevShell.ps1"
             $version = "Preview"
         }
 
-        if(-not (Test-Path (Split-Path $shellPath -Parent))) {
-            return $false
+        if (-not (Test-Path (Split-Path $shellPath -Parent))) {
+            $completedSucessfully = $false
         }
 
         Push-Location (Split-Path $shellPath -Parent)
@@ -41,10 +42,11 @@ function Use-VS2022 {
         & $shellPath
         Pop-Location
         Write-Information "   - Visual Studio 2022 ($version) Command Prompt variables set."
+
     }
 
     end {
-        return $true
+        return $completedSucessfully
     }
 }
 
