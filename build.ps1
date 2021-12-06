@@ -36,6 +36,9 @@ $Params = @{
     FunctionsToExport = $functionList
 }
 
+$Params.Remove("Copyright")
+$Params.Add("Copyright", "Copyright $(Get-Date -Format "yyyy") $($buildconfiguration.Author)")
+
 if ($buildconfiguration.Copyright) { $Params.Remove("Copyright"); $Params.Add("Copyright", $buildconfiguration.Copyright) }
 
 if ($buildconfiguration.NestedModules) { $Params.Add("NestedModules", $buildconfiguration.NestedModules) }
