@@ -1,12 +1,12 @@
 <div align="center">
 
-![Logo.](./images/settings_icon.png "Logo")
+![Logo.](./images/msbuild.png "Logo")
 
-# Simple Settings
+# DevOps Commands
 
 [![Contributors][contributors-shield]][contributors-url][![Forks][forks-shield]][forks-url][![Stargazers][stars-shield]][stars-url][![Issues][issues-shield]][issues-url][![MIT License][license-shield]][license-url]
 
-Simple setting solution for PowerShell and beyond!
+A PowerShell module to help with developing locally using MSBuild.
 
 **[Explore the docs »](https://github.com/sytone/devopscommands)**
 
@@ -61,7 +61,7 @@ To install this module to use you have three options
 #### Clone, build and install
 
 1. Clone this repo somewhere.
-2. Run the build ps1 in this folder to update.
+2. Run the build.ps1 in this folder to update.
 3. Run install.ps1 in this directory to add the loading of this module to your powershell profile. You have to run it in each instance (PowerShell is different to PowerShell Core)
 
 ```PowerShell
@@ -82,10 +82,28 @@ To run with defaults just use the `msb` alias at the root of your project. This 
 
 If you want to override the default settings put these variables at the end of your profile with the values you want to use. If you are happy with these defaults do not worry about them.
 
+#### Default Settings
+
+| Setting                 | Value                                                                                          | Description                                   |
+| ----------------------- | ---------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| StructuredLogViewerPath | "$env:USERPROFILE\AppData\Local\MSBuildStructuredLogViewer\app-2.1.88\StructuredLogViewer.exe" | Viewer for the Binary log produced by MSBuild |
+| MsBuildArguments | '/nologo', '/m', '/nr:false', '/p:TreatWarningsAsErrors="true"', '/p:Platform="x64"' | Arguments passed to MSBuild on every execution |
+| VsDefault | 17 | Version of Visual Studio to import the console settings from |
+
+
+#### Update Default Settings
+
+Settings are controlled by the SimpleSettings commands, this is a dependency of this module. To update the default you can use commands like below with your values.
+
 ``` PowerShell
-$Global:StructuredLogViewerPath = "$env:USERPROFILE\AppData\Local\MSBuildStructuredLogViewer\app-2.0.64\StructuredLogViewer.exe"
-$Global:msBuildArguments = @('/nologo', '/m', '/nr:false', '/p:TreatWarningsAsErrors="true"', '/p:Platform="x64"')
-$Global:vsDefault = "16" #VS2019 use 15 for VS2017
+Set-SimpleSetting -Name "StructuredLogViewerPath" -Section "DevOpsCommands" -Value "$env:USERPROFILE\AppData\Local\MSBuildStructuredLogViewer\app-2.0.64\StructuredLogViewer.exe"
+
+Set-SimpleSetting -Name "MsBuildArguments" -Section "DevOpsCommands" -Value @('/nologo', '/m', '/nr:false', '/p:TreatWarningsAsErrors="true"', '/p:Platform="x64"')
+
+# 15 == VS 2017
+# 16 == VS 2019
+# 17 == VS 2022
+Set-SimpleSetting -Name "VsDefault" -Section "DevOpsCommands" -Value "17"
 ```
 
 ### Commands

@@ -1,6 +1,6 @@
 $Script:StructuredLogViewerPath = "$env:USERPROFILE\AppData\Local\MSBuildStructuredLogViewer\app-2.1.88\StructuredLogViewer.exe"
 $Script:msBuildArguments = @('/nologo', '/m', '/nr:false', '/p:TreatWarningsAsErrors="true"', '/p:Platform="x64"')
-$Script:vsDefault = "16"
+$Script:vsDefault = "17"
 
 
 if ($null -ne (Get-Module -Name SimpleSettings)) {

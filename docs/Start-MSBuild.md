@@ -13,8 +13,9 @@ Runs MBuild with binary logging enabled by default
 ## SYNTAX
 
 ```
-Start-MSBuild [-LogToConsole] [-Clean] [-Restore] [-CleanNugetCache] [-Release] [-Nuke]
- [[-AdditionalArguments] <Object>] [[-NukeFolders] <Object>] [-WhatIf] [-Confirm] [<CommonParameters>]
+Start-MSBuild [[-AdditionalArguments] <Object>] [-LogToConsole] [-Clean] [-Restore] [-CleanNugetCache]
+ [-Release] [-Nuke] [-ShowBuildSummary] [-LogVerbosity <String>] [-NukeFolders <Object>] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -28,6 +29,21 @@ Start-MSBuild
 ```
 
 ## PARAMETERS
+
+### -AdditionalArguments
+Allows you to add additional arguments to the msbuild command.
+
+```yaml
+Type: Object
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 1
+Default value: @()
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -LogToConsole
 Enabled Console logging, this will slow down the build process but give you immediate visual feedback.
@@ -120,17 +136,32 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -AdditionalArguments
-Allows you to add additional arguments to the msbuild command.
+### -ShowBuildSummary
+{{ Fill ShowBuildSummary Description }}
 
 ```yaml
-Type: Object
+Type: SwitchParameter
 Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
-Default value: @()
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -LogVerbosity
+{{ Fill LogVerbosity Description }}
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: Minimal
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -144,7 +175,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 2
+Position: Named
 Default value: @("bin", "obj", "node_modules", "out")
 Accept pipeline input: False
 Accept wildcard characters: False

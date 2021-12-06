@@ -29,13 +29,17 @@ function Start-MSBuild {
   #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param (
+        [Parameter(Position = 0)]
+        $AdditionalArguments = @(),
         [Switch] $LogToConsole,
         [Switch] $Clean,
         [Switch] $Restore,
         [Switch] $CleanNugetCache,
         [Switch] $Release,
         [Switch] $Nuke,
-        $AdditionalArguments = @(),
+        [Switch] $ShowBuildSummary,
+        [ValidateSet("quiet", "minimal", "normal", "detailed", "diagnostic")]
+        [string]$LogVerbosity = "minimal",
         $NukeFolders = @("bin", "obj", "node_modules", "out")
     )
 
@@ -59,7 +63,12 @@ function Start-MSBuild {
         $sw = [Diagnostics.Stopwatch]::StartNew()
         $msBuildArgumentsUsed = $msBuildArguments
         if ($LogToConsole) {
-            $msBuildArgumentsUsed += '/consoleLoggerParameters:PerformanceSummary;Summary;Verbosity=minimal'
+            if ($ShowBuildSummary) {
+                $msBuildArgumentsUsed += "/consoleLoggerParameters:PerformanceSummary;Summary;Verbosity=$LogVerbosity"
+            }
+            else {
+                $msBuildArgumentsUsed += "/consoleLoggerParameters:Verbosity=$LogVerbosity"
+            }
         }
         else {
             $msBuildArgumentsUsed += '/noconsolelogger'
@@ -73,17 +82,13 @@ function Start-MSBuild {
             $msBuildArgumentsUsed += '/p:Configuration="Debug"'
         }
 
+        $msBuildArgumentsUsed += "/verbosity:$LogVerbosity"
+
         $msBuildArgumentsUsed += $AdditionalArguments
         if ($null -eq (Get-Command "msbuild.exe" -ErrorAction SilentlyContinue)) {
             Write-Information "Unable to find msbuild.exe in your PATH, loading VS $vsDefault"
             switch ($vsDefault) {
-                "17" {
-                    $completed = Use-VS2022
-                    if($completed -ne $true) {
-                        # Fall back to 19.
-                        Use-VS2019
-                    }
-                 }
+                "17" { Use-VS2022 }
                 "16" { Use-VS2019 }
                 "15" { Use-VS2017 }
                 Default { Use-VS2019 }
@@ -136,7 +141,7 @@ function Start-MSBuild {
             if (-not (Get-Process StructuredLogViewer -ErrorAction SilentlyContinue)) {
                 $StructuredLogViewerPath = (Get-Command StructuredLogViewer.exe).Source
                 if ($PSCmdlet.ShouldProcess("&", "$StructuredLogViewerPath $PWD\msbuild.binlog")) {
-                    & $StructuredLogViewerPath $PWD\msbuild.binlog
+                    Start-Process -FilePath $StructuredLogViewerPath -ArgumentList "$PWD\msbuild.binlog" -NoNewWindow
                 }
             }
         }
