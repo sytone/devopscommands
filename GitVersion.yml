@@ -1,14 +1,13 @@
 next-version: 1.0
-mode: Mainline
+mode: ContinuousDelivery
+major-version-bump-message: '\(breaking:|major:)'
+minor-version-bump-message: '\(feat:|feature:)'
+patch-version-bump-message: '\fix:'
 branches:
-    main:
-        increment: Patch
-    pull-request:
-        tag: rc
-        increment: Patch
-    features:
-        increment: Patch
-        regex: .*?/
-        source-branches:
-            - main
-            - features
+  main:
+    regex: ^main$
+    mode: ContinuousDelivery
+    increment: Patch
+    is-release-branch: true
+    is-mainline: true
+
