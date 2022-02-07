@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     # The version of the output module
-    [Alias("ModuleVersion")]
+    [Alias('ModuleVersion')]
     [string]$SemVer,
 
     [Switch]
@@ -15,10 +15,10 @@ $moduleName = $buildconfiguration.moduleName
 
 $manifestPath = "$PSScriptRoot\$moduleName.psd1"
 
-Write-Information "Validating Manifest..."
+Write-Information 'Validating Manifest...'
 $manifest = Test-ModuleManifest -Path $manifestPath
 
-Write-Information "Updating Version..."
+Write-Information 'Updating Version...'
 if (-not $SemVer) {
     $SemVer = gitversion -showvariable SemVer
 }
@@ -31,53 +31,53 @@ $currentManifest = Import-PowerShellDataFile $manifestPath
 
 $Params = @{
     Path              = $manifestPath
-    Copyright         = "Copyright $(Get-Date -Format "yyyy") $($currentManifest.Author)"
+    Copyright         = "Copyright $(Get-Date -Format 'yyyy') $($currentManifest.Author)"
     ModuleVersion     = $SemVer
     FunctionsToExport = $functionList
 }
 
-$Params.Remove("Copyright")
-$Params.Add("Copyright", "Copyright $(Get-Date -Format "yyyy") $($buildconfiguration.Author)")
+$Params.Remove('Copyright')
+$Params.Add('Copyright', "Copyright $(Get-Date -Format 'yyyy') $($buildconfiguration.Author)")
 
-if ($buildconfiguration.Copyright) { $Params.Remove("Copyright"); $Params.Add("Copyright", $buildconfiguration.Copyright) }
+if ($buildconfiguration.Copyright) { $Params.Remove('Copyright'); $Params.Add('Copyright', $buildconfiguration.Copyright) }
 
-if ($buildconfiguration.NestedModules) { $Params.Add("NestedModules", $buildconfiguration.NestedModules) }
-if ($buildconfiguration.Guid) { $Params.Add("Guid", $buildconfiguration.Guid) }
-if ($buildconfiguration.Author) { $Params.Add("Author", $buildconfiguration.Author) }
-if ($buildconfiguration.CompanyName) { $Params.Add("CompanyName", $buildconfiguration.CompanyName) }
-if ($buildconfiguration.RootModule) { $Params.Add("RootModule", $buildconfiguration.RootModule) }
-if ($buildconfiguration.Description) { $Params.Add("Description", $buildconfiguration.Description) }
-if ($buildconfiguration.ProcessorArchitecture) { $Params.Add("ProcessorArchitecture", $buildconfiguration.ProcessorArchitecture) }
-if ($buildconfiguration.CompatiblePSEditions) { $Params.Add("CompatiblePSEditions", $buildconfiguration.CompatiblePSEditions) }
-if ($buildconfiguration.PowerShellVersion) { $Params.Add("PowerShellVersion", $buildconfiguration.PowerShellVersion) }
-if ($buildconfiguration.ClrVersion) { $Params.Add("ClrVersion", $buildconfiguration.ClrVersion) }
-if ($buildconfiguration.DotNetFrameworkVersion) { $Params.Add("DotNetFrameworkVersion", $buildconfiguration.DotNetFrameworkVersion) }
-if ($buildconfiguration.PowerShellHostName) { $Params.Add("PowerShellHostName", $buildconfiguration.PowerShellHostName) }
-if ($buildconfiguration.PowerShellHostVersion) { $Params.Add("PowerShellHostVersion", $buildconfiguration.PowerShellHostVersion) }
-if ($buildconfiguration.RequiredModules) { $Params.Add("RequiredModules", $buildconfiguration.RequiredModules) }
-if ($buildconfiguration.TypesToProcess) { $Params.Add("TypesToProcess", $buildconfiguration.TypesToProcess) }
-if ($buildconfiguration.FormatsToProcess) { $Params.Add("FormatsToProcess", $buildconfiguration.FormatsToProcess) }
-if ($buildconfiguration.ScriptsToProcess) { $Params.Add("ScriptsToProcess", $buildconfiguration.ScriptsToProcess) }
-if ($buildconfiguration.RequiredAssemblies) { $Params.Add("RequiredAssemblies", $buildconfiguration.RequiredAssemblies) }
-if ($buildconfiguration.FileList) { $Params.Add("FileList", $buildconfiguration.FileList) }
-if ($buildconfiguration.ModuleList) { $Params.Add("ModuleList", $buildconfiguration.ModuleList) }
-if ($buildconfiguration.AliasesToExport) { $Params.Add("AliasesToExport", $buildconfiguration.AliasesToExport) }
-if ($buildconfiguration.VariablesToExport) { $Params.Add("VariablesToExport", $buildconfiguration.VariablesToExport) }
-if ($buildconfiguration.CmdletsToExport) { $Params.Add("CmdletsToExport", $buildconfiguration.CmdletsToExport) }
-if ($buildconfiguration.DscResourcesToExport) { $Params.Add("DscResourcesToExport", $buildconfiguration.DscResourcesToExport) }
-if ($buildconfiguration.PrivateData) { $Params.Add("PrivateData", $buildconfiguration.PrivateData) }
-if ($buildconfiguration.Tags) { $Params.Add("Tags", $buildconfiguration.Tags) }
-if ($buildconfiguration.ProjectUri) { $Params.Add("ProjectUri", $buildconfiguration.ProjectUri) }
-if ($buildconfiguration.LicenseUri) { $Params.Add("LicenseUri", $buildconfiguration.LicenseUri) }
-if ($buildconfiguration.IconUri) { $Params.Add("IconUri", $buildconfiguration.IconUri) }
-if ($buildconfiguration.ReleaseNotes) { $Params.Add("ReleaseNotes", $buildconfiguration.ReleaseNotes) }
-if ($buildconfiguration.Prerelease) { $Params.Add("Prerelease", $buildconfiguration.Prerelease) }
-if ($buildconfiguration.HelpInfoUri) { $Params.Add("HelpInfoUri", $buildconfiguration.HelpInfoUri) }
-if ($buildconfiguration.PassThru) { $Params.Add("PassThru", $buildconfiguration.PassThru) }
-if ($buildconfiguration.DefaultCommandPrefix) { $Params.Add("DefaultCommandPrefix", $buildconfiguration.DefaultCommandPrefix) }
-if ($buildconfiguration.ExternalModuleDependencies) { $Params.Add("ExternalModuleDependencies", $buildconfiguration.ExternalModuleDependencies) }
-if ($buildconfiguration.PackageManagementProviders) { $Params.Add("PackageManagementProviders", $buildconfiguration.PackageManagementProviders) }
-if ($buildconfiguration.RequireLicenseAcceptance) { $Params.Add("RequireLicenseAcceptance", $buildconfiguration.RequireLicenseAcceptance) }
+if ($buildconfiguration.NestedModules) { $Params.Add('NestedModules', $buildconfiguration.NestedModules) }
+if ($buildconfiguration.Guid) { $Params.Add('Guid', $buildconfiguration.Guid) }
+if ($buildconfiguration.Author) { $Params.Add('Author', $buildconfiguration.Author) }
+if ($buildconfiguration.CompanyName) { $Params.Add('CompanyName', $buildconfiguration.CompanyName) }
+if ($buildconfiguration.RootModule) { $Params.Add('RootModule', $buildconfiguration.RootModule) }
+if ($buildconfiguration.Description) { $Params.Add('Description', $buildconfiguration.Description) }
+if ($buildconfiguration.ProcessorArchitecture) { $Params.Add('ProcessorArchitecture', $buildconfiguration.ProcessorArchitecture) }
+if ($buildconfiguration.CompatiblePSEditions) { $Params.Add('CompatiblePSEditions', $buildconfiguration.CompatiblePSEditions) }
+if ($buildconfiguration.PowerShellVersion) { $Params.Add('PowerShellVersion', $buildconfiguration.PowerShellVersion) }
+if ($buildconfiguration.ClrVersion) { $Params.Add('ClrVersion', $buildconfiguration.ClrVersion) }
+if ($buildconfiguration.DotNetFrameworkVersion) { $Params.Add('DotNetFrameworkVersion', $buildconfiguration.DotNetFrameworkVersion) }
+if ($buildconfiguration.PowerShellHostName) { $Params.Add('PowerShellHostName', $buildconfiguration.PowerShellHostName) }
+if ($buildconfiguration.PowerShellHostVersion) { $Params.Add('PowerShellHostVersion', $buildconfiguration.PowerShellHostVersion) }
+if ($buildconfiguration.RequiredModules) { $Params.Add('RequiredModules', $buildconfiguration.RequiredModules) }
+if ($buildconfiguration.TypesToProcess) { $Params.Add('TypesToProcess', $buildconfiguration.TypesToProcess) }
+if ($buildconfiguration.FormatsToProcess) { $Params.Add('FormatsToProcess', $buildconfiguration.FormatsToProcess) }
+if ($buildconfiguration.ScriptsToProcess) { $Params.Add('ScriptsToProcess', $buildconfiguration.ScriptsToProcess) }
+if ($buildconfiguration.RequiredAssemblies) { $Params.Add('RequiredAssemblies', $buildconfiguration.RequiredAssemblies) }
+if ($buildconfiguration.FileList) { $Params.Add('FileList', $buildconfiguration.FileList) }
+if ($buildconfiguration.ModuleList) { $Params.Add('ModuleList', $buildconfiguration.ModuleList) }
+if ($buildconfiguration.AliasesToExport) { $Params.Add('AliasesToExport', $buildconfiguration.AliasesToExport) }
+if ($buildconfiguration.VariablesToExport) { $Params.Add('VariablesToExport', $buildconfiguration.VariablesToExport) }
+if ($buildconfiguration.CmdletsToExport) { $Params.Add('CmdletsToExport', $buildconfiguration.CmdletsToExport) }
+if ($buildconfiguration.DscResourcesToExport) { $Params.Add('DscResourcesToExport', $buildconfiguration.DscResourcesToExport) }
+if ($buildconfiguration.PrivateData) { $Params.Add('PrivateData', $buildconfiguration.PrivateData) }
+if ($buildconfiguration.Tags) { $Params.Add('Tags', $buildconfiguration.Tags) }
+if ($buildconfiguration.ProjectUri) { $Params.Add('ProjectUri', $buildconfiguration.ProjectUri) }
+if ($buildconfiguration.LicenseUri) { $Params.Add('LicenseUri', $buildconfiguration.LicenseUri) }
+if ($buildconfiguration.IconUri) { $Params.Add('IconUri', $buildconfiguration.IconUri) }
+if ($buildconfiguration.ReleaseNotes) { $Params.Add('ReleaseNotes', $buildconfiguration.ReleaseNotes) }
+if ($buildconfiguration.Prerelease) { $Params.Add('Prerelease', $buildconfiguration.Prerelease) }
+if ($buildconfiguration.HelpInfoUri) { $Params.Add('HelpInfoUri', $buildconfiguration.HelpInfoUri) }
+if ($buildconfiguration.PassThru) { $Params.Add('PassThru', $buildconfiguration.PassThru) }
+if ($buildconfiguration.DefaultCommandPrefix) { $Params.Add('DefaultCommandPrefix', $buildconfiguration.DefaultCommandPrefix) }
+if ($buildconfiguration.ExternalModuleDependencies) { $Params.Add('ExternalModuleDependencies', $buildconfiguration.ExternalModuleDependencies) }
+if ($buildconfiguration.PackageManagementProviders) { $Params.Add('PackageManagementProviders', $buildconfiguration.PackageManagementProviders) }
+if ($buildconfiguration.RequireLicenseAcceptance) { $Params.Add('RequireLicenseAcceptance', $buildconfiguration.RequireLicenseAcceptance) }
 
 
 Update-ModuleManifest @Params
@@ -89,13 +89,13 @@ Update-ModuleManifest @Params
 
 
 # Create new markdown and XML help files
-Write-Information "Building new function documentation"
+Write-Information 'Building new function documentation'
 Import-Module -Name "$PSScriptRoot\$moduleName.psm1" -Force
 Get-Module $moduleName | Out-Null
-Write-Information "Updating markdown based help"
+Write-Information 'Updating markdown based help'
 New-MarkdownHelp -Module $moduleName -OutputFolder .\docs -ErrorAction SilentlyContinue
 Update-MarkdownHelp "$PSScriptRoot\docs"
-Write-Information "Building new xml file for help"
+Write-Information 'Building new xml file for help'
 New-ExternalHelp -Path "$PSScriptRoot\docs" -OutputPath "$PSScriptRoot\en-US\" -Force
 
 # Package for Publish
@@ -112,7 +112,8 @@ Copy-Item -Path $PSScriptRoot/$moduleName.psm1 -Destination $PSScriptRoot/publis
 Copy-Item -Path $PSScriptRoot/README.md -Destination $PSScriptRoot/publish/$moduleName/ -Recurse
 Copy-Item -Path $PSScriptRoot/LICENSE -Destination $PSScriptRoot/publish/$moduleName/ -Recurse
 
-if ((Get-Command -Name "Get-SimpleSetting") -and $Publish) {
-    $publishKey = Get-SimpleSetting -Section "PowerShellGallery" -Name "DefaultApiKey"
+if ((Get-Command -Name 'Get-SimpleSetting') -and $Publish) {
+    Write-Information 'Publishing to PowerShellGallery.'
+    $publishKey = Get-SimpleSetting -Section 'PowerShellGallery' -Name 'DefaultApiKey'
     Publish-Module -Path "$PSScriptRoot/publish/$moduleName" -NuGetApiKey $publishKey
 }
