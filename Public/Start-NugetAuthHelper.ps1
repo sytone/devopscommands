@@ -15,8 +15,9 @@ function Start-NugetAuthHelper {
   #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param (
-        [String] $NugetConfigPath = ".\NuGet.config"
+        [String] $NugetConfigPath = '.\NuGet.config'
     )
+
     begin {
         Write-Information (Get-ModuleHeaderInfo)
         if (!(Test-Path $NugetConfigPath)) {
@@ -25,17 +26,28 @@ function Start-NugetAuthHelper {
     }
 
     process {
-        if (Get-Command nuget.exe) {
-            if (!(Test-Path "~\.tools")) { New-Item -Path "~\.tools" -ItemType Directory -Force -ErrorAction SilentlyContinue | Out-Null }
-            Write-Information "Installing/Updating Microsoft.VisualStudio.Services.NuGet.AuthHelper"
-            if ($PSCmdlet.ShouldProcess("Target", "Operation")) {
-                nuget install "Microsoft.VisualStudio.Services.NuGet.AuthHelper" -source "https://nuget.org/api/v2/" -OutputDirectory (Resolve-Path ~/.tools).Path -Prerelease -NonInteractive -Verbosity quiet
 
-                & "$((Get-ChildItem "~\.tools\Microsoft.VisualStudio.Services.NuGet.AuthHelper*")[-1].FullName)\tools\VSS.NuGet.AuthHelper.exe" -C $NugetConfigPath
+        if (Get-Command nuget.exe -ErrorAction SilentlyContinue) {
+            Write-Verbose 'Nuget found in path.'
+        } else {
+            Write-Information 'Nuget not found in path. Downloading to dotnet tools.'
+            if ( -not (Test-Path -Path '~\.dotnet\tools')) {
+                New-Item -Path '~\.dotnet\tools' -ItemType Directory -Force -ErrorAction SilentlyContinue | Out-Null
+                $env:path += ";$env:USERPROFILE\.dotnet\tools"
             }
-            else {
+            Invoke-WebRequest 'https://dist.nuget.org/win-x86-commandline/latest/nuget.exe' -OutFile "$env:USERPROFILE\.dotnet\tools\Nuget.exe"
+        }
+
+        if (Get-Command nuget.exe) {
+            if (!(Test-Path '~\.tools')) { New-Item -Path '~\.tools' -ItemType Directory -Force -ErrorAction SilentlyContinue | Out-Null }
+            Write-Information 'Installing/Updating Microsoft.VisualStudio.Services.NuGet.AuthHelper'
+            if ($PSCmdlet.ShouldProcess('Target', 'Operation')) {
+                nuget install 'Microsoft.VisualStudio.Services.NuGet.AuthHelper' -source 'https://nuget.org/api/v2/' -OutputDirectory (Resolve-Path ~/.tools).Path -Prerelease -NonInteractive -Verbosity quiet
+
+                & "$((Get-ChildItem '~\.tools\Microsoft.VisualStudio.Services.NuGet.AuthHelper*')[-1].FullName)\tools\VSS.NuGet.AuthHelper.exe" -C $NugetConfigPath
+            } else {
                 Write-Information "Ran 'nuget install `"Microsoft.VisualStudio.Services.NuGet.AuthHelper`" -source `"https://nuget.org/api/v2/`" -OutputDirectory $(Resolve-Path ~/.tools).Path -Prerelease -NonInteractive -Verbosity quiet'"
-                Write-Information "Ran '& `"$((Get-ChildItem "~\.tools\Microsoft.VisualStudio.Services.NuGet.AuthHelper*")[-1].FullName)\tools\VSS.NuGet.AuthHelper.exe`" -C $NugetConfigPath'"
+                Write-Information "Ran '& `"$((Get-ChildItem '~\.tools\Microsoft.VisualStudio.Services.NuGet.AuthHelper*')[-1].FullName)\tools\VSS.NuGet.AuthHelper.exe`" -C $NugetConfigPath'"
             }
         }
     }
