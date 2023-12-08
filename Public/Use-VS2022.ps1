@@ -11,7 +11,7 @@ function Use-VS2022 {
       Use-VS2022
   #>
     begin {
-        Write-Information (Get-ModuleHeaderInfo)
+        wh (Get-ModuleHeaderInfo)
         $completedSucessfully = $false
     }
 
@@ -37,12 +37,12 @@ function Use-VS2022 {
         else {
 
             Push-Location (Split-Path $shellPath -Parent)
-            Write-Information "`n------------------------------------------------------------"
-            Write-Information " * Setting up environment..."
-            Write-Information "   - Visual Studio 2022 ($version) Command Prompt processing."
+            wi "------------------------------------------------------------"
+            wi " * Setting up environment..."
+            wi "   - Visual Studio 2022 ($version) Command Prompt processing."
             & $shellPath
             Pop-Location
-            Write-Information "   - Visual Studio 2022 ($version) Command Prompt variables set."
+            wi "   - Visual Studio 2022 ($version) Command Prompt variables set."
             $completedSucessfully = $true
         }
 

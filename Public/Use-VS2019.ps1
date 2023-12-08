@@ -11,7 +11,7 @@ function Use-VS2019 {
       Use-VS2019
   #>
     begin {
-        Write-Information (Get-ModuleHeaderInfo)
+        wh (Get-ModuleHeaderInfo)
     }
 
     process {
@@ -28,9 +28,9 @@ function Use-VS2019 {
             exit 1
         }
 
-        Write-Information "`n------------------------------------------------------------"
-        Write-Information " * Setting up environment..."
-        Write-Information "   - Visual Studio 2019 ($version) Command Prompt processing."
+        wi "------------------------------------------------------------"
+        wi " * Setting up environment..."
+        wi "   - Visual Studio 2019 ($version) Command Prompt processing."
         Push-Location $shellPath
         cmd /c "VsDevCmd.bat&set" |
         ForEach-Object {
@@ -39,7 +39,7 @@ function Use-VS2019 {
             }
         }
         Pop-Location
-        Write-Information "   - Visual Studio 2019 ($version) Command Prompt variables set."
+        wi "   - Visual Studio 2019 ($version) Command Prompt variables set."
     }
 
     end {

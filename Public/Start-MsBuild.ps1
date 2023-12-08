@@ -24,6 +24,12 @@ function Start-MSBuild {
     .PARAMETER AdditionalArguments
       Allows you to add additional arguments to the msbuild command.
 
+    .PARAMETER Nuke
+      Deletes all folders called bin, obj, node_modules, out
+
+    .PARAMETER GitNuke
+      Deletes all extra files, resets the git repo to the last commit and pulls the latest changes.
+
     .EXAMPLE
       Start-MSBuild
   #>
@@ -37,6 +43,7 @@ function Start-MSBuild {
         [Switch] $CleanNugetCache,
         [Switch] $Release,
         [Switch] $Nuke,
+        [Switch] $GitNuke,
         [Switch] $ShowBuildSummary,
         [ValidateSet("quiet", "minimal", "normal", "detailed", "diagnostic")]
         [string]$LogVerbosity = "minimal",
@@ -44,18 +51,18 @@ function Start-MSBuild {
     )
 
     begin {
-        Write-Information (Get-ModuleHeaderInfo)
-        Write-Information "Executing MSBuild with following settings"
-        Write-Information "     Visual Studio Version: $vsDefault"
-        Write-Information "   Default Build Arguments: $msBuildArguments"
-        Write-Information "Structured Log Viewer Path: $StructuredLogViewerPath"
-        if ($LogToConsole) { Write-Information "- Logging to Console Enabled" }
-        if ($Nuke) { Write-Information "- Removing all folders called ($($NukeFolders -join ","))" }
-        if ($Clean) { Write-Information "- Clean Enabled" }
-        if ($Restore) { Write-Information "- Restore Enabled" }
-        if ($CleanNugetCache) { Write-Information "- Clean Nuget Cache Enabled" }
-        if ($Release) { Write-Information "- Release Configuration Enabled" }
-        Write-Information "Additional Arguments: $($AdditionalArguments)"
+        wh (Get-ModuleHeaderInfo)
+        wi "Executing MSBuild with following settings"
+        wi "     Visual Studio Version: $vsDefault"
+        wi "   Default Build Arguments: $msBuildArguments"
+        wi "Structured Log Viewer Path: $StructuredLogViewerPath"
+        if ($LogToConsole) { wi "- Logging to Console Enabled" }
+        if ($Nuke) { wi "- Removing all folders called ($($NukeFolders -join ","))" }
+        if ($Clean) { wi "- Clean Enabled" }
+        if ($Restore) { wi "- Restore Enabled" }
+        if ($CleanNugetCache) { wi "- Clean Nuget Cache Enabled" }
+        if ($Release) { wi "- Release Configuration Enabled" }
+        wi "Additional Arguments: $($AdditionalArguments)"
     }
 
     process {
@@ -65,20 +72,17 @@ function Start-MSBuild {
         if ($LogToConsole) {
             if ($ShowBuildSummary) {
                 $msBuildArgumentsUsed += "/consoleLoggerParameters:PerformanceSummary;Summary;Verbosity=$LogVerbosity"
-            }
-            else {
+            } else {
                 $msBuildArgumentsUsed += "/consoleLoggerParameters:Verbosity=$LogVerbosity"
             }
-        }
-        else {
+        } else {
             $msBuildArgumentsUsed += '/noconsolelogger'
             $msBuildArgumentsUsed += '/binaryLogger'
         }
 
         if ($Release) {
             $msBuildArgumentsUsed += '/p:Configuration="Release"'
-        }
-        else {
+        } else {
             $msBuildArgumentsUsed += '/p:Configuration="Debug"'
         }
 
@@ -86,7 +90,7 @@ function Start-MSBuild {
 
         $msBuildArgumentsUsed += $AdditionalArguments
         if ($null -eq (Get-Command "msbuild.exe" -ErrorAction SilentlyContinue)) {
-            Write-Information "Unable to find msbuild.exe in your PATH, loading VS $vsDefault"
+            wi "Unable to find msbuild.exe in your PATH, loading VS $vsDefault"
             switch ($vsDefault) {
                 "17" { Use-VS2022 }
                 "16" { Use-VS2019 }
@@ -96,39 +100,44 @@ function Start-MSBuild {
         }
 
         if ($null -eq (Get-Command "msbuild.exe" -ErrorAction SilentlyContinue)) {
-            Write-Information "Unable to find msbuild.exe in your PATH, unable to build."
-        }
-        else {
+            wi "Unable to find msbuild.exe in your PATH, unable to build."
+        } else {
 
             if ($CleanNugetCache) {
-                Write-Information "Cleaning the NUGET Cache"
+                wi "Cleaning the NUGET Cache"
                 if ($PSCmdlet.ShouldProcess("Start-Process", "dotnet nuget locals all --clear")) {
-                    Start-Process -FilePath dotnet  -ArgumentList ('nuget', 'locals', 'all', '--clear') -NoNewWindow -Wait
+                    Start-Process -FilePath dotnet -ArgumentList ('nuget', 'locals', 'all', '--clear') -NoNewWindow -Wait
                 }
             }
 
             if ($Nuke) {
-                Write-Information "Deleteing folders $($NukeFolders -join ",") "
+                wi "Deleteing folders $($NukeFolders -join ",") "
                 if ($PSCmdlet.ShouldProcess("Start-Process", "Get-ChildItem ./ -include $($NukeFolders -join ",") -Recurse | ForEach-Object { [IO.Directory]::Delete(`$_.FullName, `$true) }")) {
-                    Get-ChildItem ./ -include $NukeFolders -Recurse | ForEach-Object { [IO.Directory]::Delete($_.FullName, $true) }
+                    Get-ChildItem ./ -Include $NukeFolders -Recurse | ForEach-Object { [IO.Directory]::Delete($_.FullName, $true) }
                 }
             }
 
+            if ($GitNuke) {
+                git clean -fdx
+                git reset HEAD~1 --hard
+                git pull
+            }
+
             if ($Restore) {
-                Write-Information "Running restore target"
+                wi "Running restore target"
                 if ($PSCmdlet.ShouldProcess("Start-Process", "msbuild $msBuildArgumentsUsed /t:`"Restore`"")) {
                     Start-Process -FilePath msbuild -ArgumentList ($msBuildArgumentsUsed.Replace("/binaryLogger", "/binaryLogger:restore.binlog") + '/t:"Restore"') -NoNewWindow -Wait
                 }
             }
 
             if ($Clean) {
-                Write-Information "Running clean target"
+                wi "Running clean target"
                 if ($PSCmdlet.ShouldProcess("Start-Process", "msbuild $msBuildArgumentsUsed /t:`"Clean`"")) {
                     Start-Process -FilePath msbuild -ArgumentList ($msBuildArgumentsUsed.Replace("/binaryLogger", "/binaryLogger:clean.binlog") + '/t:"Clean"') -NoNewWindow -Wait
                 }
             }
 
-            Write-Information "Running build target"
+            wi "Running build target"
             if ($PSCmdlet.ShouldProcess("Start-Process", "msbuild $msBuildArgumentsUsed'")) {
                 $buildProcess = Start-Process -FilePath msbuild -ArgumentList $msBuildArgumentsUsed -NoNewWindow -PassThru
                 Wait-Process -InputObject $buildProcess
@@ -136,7 +145,7 @@ function Start-MSBuild {
             }
         }
         $sw.Stop()
-        Write-Information "Build took $($sw.Elapsed.TotalMinutes) minutes"
+        wi "Build took $($sw.Elapsed.TotalMinutes) minutes"
         if ((Get-Command $StructuredLogViewerPath) -and -not $LogToConsole) {
             if (-not (Get-Process StructuredLogViewer -ErrorAction SilentlyContinue)) {
                 $StructuredLogViewerPath = (Get-Command StructuredLogViewer.exe).Source
