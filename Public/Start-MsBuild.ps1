@@ -47,7 +47,7 @@ function Start-MSBuild {
         [Switch] $ShowBuildSummary,
         [ValidateSet("quiet", "minimal", "normal", "detailed", "diagnostic")]
         [string]$LogVerbosity = "minimal",
-        $NukeFolders = @("bin", "obj", "node_modules", "out")
+        $NukeFolders = @("bin", "obj", "node_modules", "out", "TestResults")
     )
 
     begin {

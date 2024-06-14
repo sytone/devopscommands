@@ -14,8 +14,8 @@ Runs MBuild with binary logging enabled by default
 
 ```
 Start-MSBuild [[-AdditionalArguments] <Object>] [-LogToConsole] [-Clean] [-Restore] [-CleanNugetCache]
- [-Release] [-Nuke] [-ShowBuildSummary] [-LogVerbosity <String>] [-NukeFolders <Object>] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+ [-Release] [-Nuke] [-GitNuke] [-ShowBuildSummary] [-LogVerbosity <String>] [-NukeFolders <Object>]
+ [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -136,6 +136,21 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -GitNuke
+Deletes all extra files, resets the git repo to the last commit and pulls the latest changes.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -ShowBuildSummary
 {{ Fill ShowBuildSummary Description }}
 
@@ -203,6 +218,21 @@ Prompts you for confirmation before running the cmdlet.
 Type: SwitchParameter
 Parameter Sets: (All)
 Aliases: cf
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ProgressAction
+{{ Fill ProgressAction Description }}
+
+```yaml
+Type: ActionPreference
+Parameter Sets: (All)
+Aliases: proga
 
 Required: False
 Position: Named
