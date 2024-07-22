@@ -30,6 +30,12 @@ function Start-MSBuild {
     .PARAMETER GitNuke
       Deletes all extra files, resets the git repo to the last commit and pulls the latest changes.
 
+    .PARAMETER ShowBuildSummary
+      Shows the build summary in the console output.
+
+    .PARAMETER SkipToolsRestore
+      By default a 'dotnet tool restore' is run before the build, this will skip that step.
+
     .EXAMPLE
       Start-MSBuild
   #>
@@ -45,6 +51,7 @@ function Start-MSBuild {
         [Switch] $Nuke,
         [Switch] $GitNuke,
         [Switch] $ShowBuildSummary,
+        [Switch] $SkipToolsRestore,
         [ValidateSet("quiet", "minimal", "normal", "detailed", "diagnostic")]
         [string]$LogVerbosity = "minimal",
         $NukeFolders = @("bin", "obj", "node_modules", "out", "TestResults")
@@ -102,7 +109,6 @@ function Start-MSBuild {
         if ($null -eq (Get-Command "msbuild.exe" -ErrorAction SilentlyContinue)) {
             wi "Unable to find msbuild.exe in your PATH, unable to build."
         } else {
-
             if ($CleanNugetCache) {
                 wi "Cleaning the NUGET Cache"
                 if ($PSCmdlet.ShouldProcess("Start-Process", "dotnet nuget locals all --clear")) {
@@ -121,6 +127,12 @@ function Start-MSBuild {
                 git clean -fdx
                 git reset HEAD~1 --hard
                 git pull
+            }
+
+            if (-not $SkipToolsRestore) {
+                wi "Running dotnet tool restore"
+                $toolRestoreOutcome = dotnet tool restore
+                $toolRestoreOutcome | ForEach-Object { wi $_ }
             }
 
             if ($Restore) {
