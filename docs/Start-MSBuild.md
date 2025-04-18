@@ -14,8 +14,8 @@ Runs MBuild with binary logging enabled by default
 
 ```
 Start-MSBuild [[-AdditionalArguments] <Object>] [-LogToConsole] [-Clean] [-Restore] [-CleanNugetCache]
- [-Release] [-Nuke] [-GitNuke] [-ShowBuildSummary] [-LogVerbosity <String>] [-NukeFolders <Object>]
- [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm] [<CommonParameters>]
+ [-Release] [-Nuke] [-GitNuke] [-ShowBuildSummary] [-SkipToolsRestore] [-LogVerbosity <String>]
+ [-NukeFolders <Object>] [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -153,6 +153,21 @@ Accept wildcard characters: False
 
 ### -ShowBuildSummary
 {{ Fill ShowBuildSummary Description }}
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -SkipToolsRestore
+By default a 'dotnet tool restore' is run before the build, this will skip that step.
 
 ```yaml
 Type: SwitchParameter
