@@ -4,7 +4,7 @@
 
 # DevOps Commands
 
-[![Contributors][contributors-shield]][contributors-url][![Forks][forks-shield]][forks-url][![Stargazers][stars-shield]][stars-url][![Issues][issues-shield]][issues-url][![MIT License][license-shield]][license-url]
+![Downloads][powershell-gallery-downloads-shield][![Contributors][contributors-shield]][contributors-url][![Forks][forks-shield]][forks-url][![Stargazers][stars-shield]][stars-url][![Issues][issues-shield]][issues-url][![MIT License][license-shield]][license-url]
 
 A PowerShell module to help with developing locally using MSBuild.
 
@@ -17,23 +17,31 @@ A PowerShell module to help with developing locally using MSBuild.
 <details open="open">
   <summary>Table of Contents</summary>
 
-  1. [About The Project](#about-the-project)
-     - [Built with](#built-with)
-  2. [Getting Started](#getting-started)
-     - [Prerequisites](#prerequisites)
-     - [Installation](#installation)
-  3. [Usage](#usage)
-  4. [Roadmap](#roadmap)
-  5. [Contributing](#contributing)
-  6. [License](#license)
-  7. [Contact](#contact)
-  8. [Acknowledgements](#acknowledgements)
+- [DevOps Commands](#devops-commands)
+  - [About The Project](#about-the-project)
+    - [Built With](#built-with)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+  - [Usage](#usage)
+    - [Global Settings](#global-settings)
+      - [Default Settings](#default-settings)
+      - [Update Default Settings](#update-default-settings)
+    - [Commands](#commands)
+  - [Roadmap](#roadmap)
+  - [Development](#development)
+    - [Prerequisites for Development](#prerequisites-for-development)
+    - [Available Build Tasks](#available-build-tasks)
+    - [Common Development Workflows](#common-development-workflows)
+    - [VS Code Integration](#vs-code-integration)
+  - [Contributing](#contributing)
+  - [License](#license)
+  - [Contact](#contact)
+  - [Acknowledgements](#acknowledgements)
 
 </details>
 
 ## About The Project
-
-[![DevOps Commands Screen Shot.][./images/screenshot.png]](https://github.com/sytone/devopscommands)
 
 To make development simpler in PowerShell using MSBuild this module wraps the commands and defaults to the binary logger which provides far better log output for looking at builds.
 
@@ -56,22 +64,13 @@ To install this module to use you have three options
 
 - Download the zip and extract to a local modules directory
 - Install from the [PowerShell Gallery](https://www.powershellgallery.com/)
-- Clone, build and install
 
-#### Clone, build and install
+```powershell
+# To install for the first time.
+Install-Module -Name DevOpsCommands -Scope CurrentUser
 
-1. Clone this repo somewhere.
-2. Run the build.ps1 in this folder to update.
-3. Run install.ps1 in this directory to add the loading of this module to your powershell profile. You have to run it in each instance (PowerShell is different to PowerShell Core)
-
-```PowerShell
-Install-Module -Name platyPS -Scope CurrentUser
-git clone
-cd devopscommands
-.\build.ps1
-.\install.ps1
-# open a new instance of powershell now and this module will
-# be loaded as part of the profile load.
+# To update if already installed
+Update-Module -Name DevOpsCommands -Scope CurrentUser
 ```
 
 ## Usage
@@ -89,7 +88,6 @@ If you want to override the default settings put these variables at the end of y
 | StructuredLogViewerPath | "$env:USERPROFILE\AppData\Local\MSBuildStructuredLogViewer\app-2.1.88\StructuredLogViewer.exe" | Viewer for the Binary log produced by MSBuild |
 | MsBuildArguments | '/nologo', '/m', '/nr:false', '/p:TreatWarningsAsErrors="true"', '/p:Platform="x64"' | Arguments passed to MSBuild on every execution |
 | VsDefault | 17 | Version of Visual Studio to import the console settings from |
-
 
 #### Update Default Settings
 
@@ -115,6 +113,65 @@ To get help on commands run `Get-Command -Module DevOpsCommands | Get-Help`
 
 See the [open issues](https://github.com/sytone/devopscommands/issues) for a list of proposed features (and known issues).
 
+## Development
+
+This project uses PSake for build automation. The build tasks are defined in `psakefile.ps1` and provide a modular, dependency-driven build pipeline.
+
+### Prerequisites for Development
+
+- PowerShell 5.1 or PowerShell Core 6+
+- PSake module: `Install-Module PSake -Scope CurrentUser`
+- Pester module (for testing): `Install-Module Pester -Scope CurrentUser`
+- PlatyPS module (for documentation): `Install-Module PlatyPS -Scope CurrentUser`
+
+### Available Build Tasks
+
+You can run PSake tasks using: `Invoke-PSake psakefile.ps1 -taskList <TaskName>`
+
+**Primary Tasks:**
+
+- `Default` - Runs the Build task (default when no task specified)
+- `Build` - Complete build process (validate → update version → update manifest → generate docs → package)
+- `Test` - Run build and all tests
+- `Publish` - Full pipeline with publishing to PowerShell Gallery
+- `Clean` - Clean all build artifacts
+- `FullBuild` - Complete pipeline (clean → build → test)
+
+**Individual Tasks:**
+
+- `ValidateManifest` - Validate the module manifest
+- `UpdateVersion` - Update version information
+- `UpdateManifest` - Update the module manifest with current functions
+- `GenerateDocumentation` - Generate markdown and XML help files
+- `RunTests` - Execute Pester tests
+- `PackageModule` - Package module for publishing
+
+### Common Development Workflows
+
+```powershell
+# Quick build and test
+Invoke-PSake psakefile.ps1 -taskList Test
+
+# Clean build from scratch
+Invoke-PSake psakefile.ps1 -taskList FullBuild
+
+# Build with specific version
+Invoke-PSake psakefile.ps1 -taskList Build -properties @{"SemVer"="1.4.0"}
+
+# Publish to PowerShell Gallery (requires API key setup)
+Invoke-PSake psakefile.ps1 -taskList Publish -properties @{"Publish"=$true}
+
+# Show all available tasks
+Invoke-PSake psakefile.ps1 -taskList ShowHelp
+```
+
+### VS Code Integration
+
+The project includes VS Code tasks that integrate with the PSake build system:
+
+- **Ctrl+Shift+P** → **Tasks: Run Task** → **Build** (or use **Ctrl+Shift+B**)
+- **Ctrl+Shift+P** → **Tasks: Run Task** → **Test** (or use **Ctrl+Shift+T**)
+
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
@@ -131,8 +188,6 @@ Contributions are what make the open source community such an amazing place to b
 Distributed under the GNU GPLv3 License. See `LICENSE` for more information.
 
 ## Contact
-
-Jon Bullen - [@sytone](https://twitter.com/sytone)
 
 Project Link: [https://github.com/sytone/devopscommands](https://github.com/sytone/devopscommands)
 
@@ -151,5 +206,4 @@ Project Link: [https://github.com/sytone/devopscommands](https://github.com/syto
 [issues-url]: https://github.com/sytone/devopscommands/issues
 [license-shield]: https://img.shields.io/github/license/sytone/devopscommands?style=for-the-badge
 [license-url]: https://github.com/sytone/devopscommands/blob/main/LICENSE
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[product-screenshot]: images/screenshot.png
+[powershell-gallery-downloads-shield]: https://img.shields.io/powershellgallery/dt/DevOpsCommands?style=for-the-badge

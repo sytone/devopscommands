@@ -34,7 +34,7 @@
     "windows": {
         "options": {
             "shell": {
-                "executable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+                "executable": "pwsh",
                 "args": [
                     "-NoProfile",
                     "-ExecutionPolicy",
@@ -70,12 +70,12 @@
         {
             "label": "Clean",
             "type": "shell",
-            "command": "Invoke-PSake build.ps1 -taskList Clean"
+            "command": "Invoke-PSake psakefile.ps1 -taskList Clean"
         },
         {
             "label": "Build",
             "type": "shell",
-            "command": "Invoke-PSake build.ps1 -taskList Build",
+            "command": "Invoke-PSake psakefile.ps1 -taskList Build",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -84,7 +84,7 @@
         {
             "label": "Test",
             "type": "shell",
-            "command": "Invoke-Pester -PesterOption @{IncludeVSCodeMarker=$true}",
+            "command": "Invoke-PSake psakefile.ps1 -taskList Test",
             "group": {
                 "kind": "test",
                 "isDefault": true
@@ -96,7 +96,17 @@
         {
             "label": "Publish",
             "type": "shell",
-            "command": "Invoke-PSake build.ps1 -taskList Publish"
+            "command": "Invoke-PSake psakefile.ps1 -taskList Publish -parameters @{Publish=$true}"
+        },
+        {
+            "label": "Full Build",
+            "type": "shell",
+            "command": "Invoke-PSake psakefile.ps1 -taskList FullBuild"
+        },
+        {
+            "label": "Show PSake Help",
+            "type": "shell",
+            "command": "Invoke-PSake psakefile.ps1 -taskList ShowHelp"
         }
     ]
 }
