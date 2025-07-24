@@ -48,7 +48,7 @@ function Start-MSBuildRelease {
         if ($PSCmdlet.ShouldProcess("Target", "Operation")) {
             Start-MSBuild @splat
         } else {
-            wi "Ran 'Start-MSBuild $($splat)'"
+            Write-Information "Ran 'Start-MSBuild $($splat)'"
         }
     }
 

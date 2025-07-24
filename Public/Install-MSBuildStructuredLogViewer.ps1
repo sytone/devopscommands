@@ -8,15 +8,15 @@ function Install-MSBuildStructuredLogViewer {
       Install-MSBuildStructuredLogViewer
   #>
     begin {
-        wh (Get-ModuleHeaderInfo)
+        Write-HeadingBlock (Get-ModuleHeaderInfo)
     }
 
     process {
-        $latetVersion = (Invoke-WebRequest -UseBasicParsing -Uri https://api.github.com/repos/KirillOsenkov/MSBuildStructuredLog/releases/latest).Content | ConvertFrom-Json
-        $downloadUrl = ($latetVersion.assets | Where-Object { $_.name -eq "MSBuildStructuredLogSetup.exe" }).browser_download_url
-        $downloadName = ($latetVersion.assets | Where-Object { $_.name -eq "MSBuildStructuredLogSetup.exe" }).name
-        $versionTag = $latetVersion.tag_name
-        wi "Update `$Global:StructuredLogViewerPath to point to $versionTag"
+        $latestVersion = (Invoke-WebRequest -UseBasicParsing -Uri https://api.github.com/repos/KirillOsenkov/MSBuildStructuredLog/releases/latest).Content | ConvertFrom-Json
+        $downloadUrl = ($latestVersion.assets | Where-Object { $_.name -eq "MSBuildStructuredLogSetup.exe" }).browser_download_url
+        $downloadName = ($latestVersion.assets | Where-Object { $_.name -eq "MSBuildStructuredLogSetup.exe" }).name
+        $versionTag = $latestVersion.tag_name
+        Write-Information "Update `$Global:StructuredLogViewerPath to point to $versionTag"
         Invoke-WebRequest -UseBasicParsing -Uri $downloadUrl -OutFile "./$downloadName"
         Start-Process -FilePath "./$downloadName" -Wait
         Remove-Item "./$downloadName" -ErrorAction SilentlyContinue | Out-Null

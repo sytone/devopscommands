@@ -8,7 +8,7 @@ schema: 2.0.0
 # Use-VS2022
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Load the build environment for Visual Studio 2022
 
 ## SYNTAX
 
@@ -17,16 +17,14 @@ Use-VS2022 [-UsePreview] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Load the build environment for Visual Studio 2022 using the Visual Studio 2022 development settings.
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
 ```
-
-{{ Add example description here }}
+Use-VS2022
+```
 
 ## PARAMETERS
 
@@ -40,7 +38,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -50,11 +48,8 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### None
-
 ## OUTPUTS
 
-### System.Object
 ## NOTES
 
 ## RELATED LINKS

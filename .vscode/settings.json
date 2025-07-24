@@ -2,5 +2,15 @@
     // Use a custom PowerShell Script Analyzer settings file for this workspace.
     // Relative paths for this setting are always relative to the workspace root dir.
     "powershell.scriptAnalysis.settingsPath": "./PSScriptAnalyzerSettings.psd1",
-    "files.defaultLanguage": "powershell"
+    "files.defaultLanguage": "powershell",
+    "cSpell.words": [
+        "binlog",
+        "Bullen",
+        "msbr",
+        "psakefile",
+        "structuredlogviewer",
+        "Sytone",
+        "USERPROFILE",
+        "vswhere"
+    ]
 }

@@ -25,62 +25,62 @@ Task Default -Depends Build
 
 # Meta tasks that combine multiple steps
 Task Build -Depends ValidateManifest, UpdateVersion, UpdateManifest, GenerateDocumentation, PackageModule {
-    Write-Host "Build completed successfully!" -ForegroundColor Green
+    Write-Information "Build completed successfully!"
 }
 
 Task Test -Depends Build, RunTests {
-    Write-Host "All tests completed!" -ForegroundColor Green
+    Write-Information "All tests completed!"
 }
 
 Task Publish -Depends Build, Test, PublishModule {
-    Write-Host "Module published successfully!" -ForegroundColor Green
+    Write-Information "Module published successfully!"
 }
 
 Task Clean -Depends CleanPublish, CleanTestResults {
-    Write-Host "Clean completed!" -ForegroundColor Green
+    Write-Information "Clean completed!"
 }
 
 Task FullBuild -Depends Clean, Build, Test {
-    Write-Host "Full build pipeline completed!" -ForegroundColor Green
+    Write-Information "Full build pipeline completed!"
 }
 
 # Individual tasks
 Task ValidateManifest {
-    Write-Host "Validating module manifest..." -ForegroundColor Yellow
+    Write-Information "Validating module manifest..."
     $manifest = Test-ModuleManifest -Path $ManifestPath -ErrorAction Stop
     $script:CurrentVersion = $manifest.Version
-    Write-Host "Manifest Version: $script:CurrentVersion" -ForegroundColor Cyan
+    Write-Information "Manifest Version: $script:CurrentVersion"
 
-    Write-Host "✓ Manifest validation passed" -ForegroundColor Green
+    Write-Information "✓ Manifest validation passed"
 }
 
 Task UpdateVersion -Depends ValidateManifest {
-    Write-Host "Updating module version..." -ForegroundColor Yellow
+    Write-Information "Updating module version..."
 
-    Write-Host "Current Version: $script:CurrentVersion" -ForegroundColor Cyan
-    Write-Host "Specified Version: $SemVer" -ForegroundColor Cyan
+    Write-Information "Current Version: $script:CurrentVersion"
+    Write-Information "Specified Version: $SemVer"
 
     if ($SemVer -eq "0.0.0") {
-        Write-Host "No version specified, using current version from manifest." -ForegroundColor Cyan
+        Write-Information "No version specified, using current version from manifest."
         $SemVer = $script:CurrentVersion
     }
 
-    Write-Host "New Version: $SemVer" -ForegroundColor Cyan
+    Write-Information "New Version: $SemVer"
 }
 
 Task UpdateManifest -Depends UpdateVersion {
-    Write-Host "Updating module manifest..." -ForegroundColor Yellow
+    Write-Information "Updating module manifest..."
 
     # Get function list from Public folder
     $functionList = (Get-ChildItem -Path $PublicPath -Filter "*.ps1").BaseName
-    Write-Host "Functions to export: $($functionList -join ', ')" -ForegroundColor Cyan
+    Write-Information "Functions to export: $($functionList -join ', ')"
 
     # Load build configuration
     $buildConfiguration = Get-Content "$PSScriptRoot\module_config.json" | ConvertFrom-Json
     $currentManifest = Import-PowerShellDataFile $ManifestPath
 
     if ($SemVer -eq "0.0.0") {
-        Write-Host "No version specified, using current version from manifest." -ForegroundColor Cyan
+        Write-Information "No version specified, using current version from manifest."
         $SemVer = $script:CurrentVersion
     }
 
@@ -124,13 +124,13 @@ Task UpdateManifest -Depends UpdateVersion {
     (Get-Content -Path $ManifestPath) -replace 'FunctionsToExport = ', 'FunctionsToExport = @(' | Set-Content -Path $ManifestPath -Force
     (Get-Content -Path $ManifestPath) -replace "$($functionList[-1])'", "$($functionList[-1])')" | Set-Content -Path $ManifestPath -Force
 
-    Write-Host "✓ Module manifest updated" -ForegroundColor Green
+    Write-Information "✓ Module manifest updated"
 }
 
 Task GenerateMarkdownHelp -Depends UpdateManifest {
-    Write-Host "Generating markdown help documentation..." -ForegroundColor Yellow
+    Write-Information "Generating markdown help documentation..."
 
-    Write-Host "Using module: $ModuleName" -ForegroundColor Cyan
+    Write-Information "Using module: $ModuleName"
     Import-Module -Name "$PSScriptRoot\$ModuleName.psm1" -Force -Global
     $moduleDetails = Get-Module $ModuleName
     if (-not $moduleDetails) {
@@ -152,35 +152,35 @@ Task GenerateMarkdownHelp -Depends UpdateManifest {
     # Update existing markdown help
     Update-MarkdownHelp $DocsPath
 
-    Write-Host "✓ Markdown help generated" -ForegroundColor Green
+    Write-Information "✓ Markdown help generated"
 }
 
 Task GenerateExternalHelp -Depends GenerateMarkdownHelp {
-    Write-Host "Generating external XML help..." -ForegroundColor Yellow
+    Write-Information "Generating external XML help..."
 
     # Generate XML help from markdown
     New-ExternalHelp -Path $DocsPath -OutputPath $EnUSPath -Force
 
-    Write-Host "✓ External XML help generated" -ForegroundColor Green
+    Write-Information "✓ External XML help generated"
 }
 
 Task GenerateDocumentation -Depends GenerateExternalHelp {
-    Write-Host "✓ All documentation generated successfully" -ForegroundColor Green
+    Write-Information "✓ All documentation generated successfully"
 }
 
 Task CleanPublish {
-    Write-Host "Cleaning publish directory..." -ForegroundColor Yellow
+    Write-Information "Cleaning publish directory..."
 
     if (Test-Path $PublishPath) {
         Get-ChildItem $PublishPath -Recurse | Remove-Item -Force -Recurse
-        Write-Host "✓ Publish directory cleaned" -ForegroundColor Green
+        Write-Information "✓ Publish directory cleaned"
     } else {
-        Write-Host "✓ Publish directory already clean" -ForegroundColor Green
+        Write-Information "✓ Publish directory already clean"
     }
 }
 
 Task CleanTestResults {
-    Write-Host "Cleaning test results..." -ForegroundColor Yellow
+    Write-Information "Cleaning test results..."
 
     # Clean up test result files
     Get-ChildItem "$PSScriptRoot\PesterResults_PS*.xml" -ErrorAction SilentlyContinue | Remove-Item -Force
@@ -191,20 +191,20 @@ Task CleanTestResults {
         Remove-Item $TestResultsPath -Recurse -Force
     }
 
-    Write-Host "✓ Test results cleaned" -ForegroundColor Green
+    Write-Information "✓ Test results cleaned"
 }
 
 Task CreatePublishStructure -Depends CleanPublish {
-    Write-Host "Creating publish directory structure..." -ForegroundColor Yellow
+    Write-Information "Creating publish directory structure..."
 
     $modulePublishPath = "$PublishPath\$ModuleName"
     New-Item -Path $modulePublishPath -ItemType Directory -Force -ErrorAction SilentlyContinue | Out-Null
 
-    Write-Host "✓ Publish structure created" -ForegroundColor Green
+    Write-Information "✓ Publish structure created"
 }
 
 Task CopyModuleFiles -Depends CreatePublishStructure, GenerateDocumentation {
-    Write-Host "Copying module files for publishing..." -ForegroundColor Yellow
+    Write-Information "Copying module files for publishing..."
 
     $modulePublishPath = "$PublishPath\$ModuleName"
 
@@ -223,27 +223,27 @@ Task CopyModuleFiles -Depends CreatePublishStructure, GenerateDocumentation {
     foreach ($item in $itemsToCopy) {
         if (Test-Path $item.Source) {
             Copy-Item -Path $item.Source -Destination $modulePublishPath -Recurse -Force
-            Write-Host "  ✓ Copied $($item.Name)" -ForegroundColor Cyan
+            Write-Information "  ✓ Copied $($item.Name)"
         } else {
             Write-Warning "Source not found: $($item.Source)"
         }
     }
 
-    Write-Host "✓ Module files copied to publish directory" -ForegroundColor Green
+    Write-Information "✓ Module files copied to publish directory"
 }
 
 Task PackageModule -Depends CopyModuleFiles {
-    Write-Host "✓ Module packaged for publishing" -ForegroundColor Green
+    Write-Information "✓ Module packaged for publishing"
 }
 
 Task RunTests -Depends ValidateTestEnvironment {
-    Write-Host "Running Pester tests..." -ForegroundColor Yellow
+    Write-Information "Running Pester tests..."
 
     $Timestamp = Get-Date -UFormat "%Y%m%d-%H%M%S"
     $PSVersion = $PSVersionTable.PSVersion.Major
     $TestFile = "TestResults_PS$PSVersion`_$TimeStamp.xml"
 
-    Write-Host "Testing with PowerShell $PSVersion" -ForegroundColor Cyan
+    Write-Information "Testing with PowerShell $PSVersion"
 
     # Import Pester
     Import-Module Pester -Force
@@ -264,18 +264,18 @@ Task RunTests -Depends ValidateTestEnvironment {
 
     # Process results
     $AllFiles = Get-ChildItem -Path "$PSScriptRoot\PesterResults*.xml" | Select-Object -ExpandProperty FullName
-    Write-Host "Test result files: $($AllFiles -join ', ')" -ForegroundColor Cyan
+    Write-Information "Test result files: $($AllFiles -join ', ')"
 
     # Check for failures
     $TestResults = @(Get-ChildItem -Path "$PSScriptRoot\PesterResults_PS*.xml" | Import-Clixml)
     $FailedCount = $TestResults | Select-Object -ExpandProperty FailedCount | Measure-Object -Sum | Select-Object -ExpandProperty Sum
 
-    Write-Host "Failed Count: $FailedCount" -ForegroundColor $(if ($FailedCount -eq 0) { 'Green' } else { 'Red' })
+    Write-Information "Failed Count: $FailedCount"
 
     if ($FailedCount -gt 0) {
         $FailedItems = $TestResults | Select-Object -ExpandProperty Tests | Where-Object { $_.Passed -notlike $True }
 
-        Write-Host "FAILED TESTS SUMMARY:" -ForegroundColor Red
+        Write-Information "FAILED TESTS SUMMARY:"
         $FailedItems | ForEach-Object {
             $Item = $_
             [PSCustomObject]@{
@@ -299,11 +299,11 @@ Task RunTests -Depends ValidateTestEnvironment {
     Remove-Item "$PSScriptRoot\TestResults_PS*.xml" -Force -ErrorAction SilentlyContinue
     Remove-Item "$PSScriptRoot\Tests\test-config.*" -Force -ErrorAction SilentlyContinue
 
-    Write-Host "✓ All tests passed!" -ForegroundColor Green
+    Write-Information "✓ All tests passed!"
 }
 
 Task ValidateTestEnvironment {
-    Write-Host "Validating test environment..." -ForegroundColor Yellow
+    Write-Information "Validating test environment..."
 
     # Check if Tests directory exists
     if (-not (Test-Path $TestsPath)) {
@@ -321,17 +321,17 @@ Task ValidateTestEnvironment {
     if ($testFiles.Count -eq 0) {
         Write-Warning "No test files found in $TestsPath"
     } else {
-        Write-Host "Found $($testFiles.Count) test file(s)" -ForegroundColor Cyan
+        Write-Information "Found $($testFiles.Count) test file(s)"
     }
 
-    Write-Host "✓ Test environment validated" -ForegroundColor Green
+    Write-Information "✓ Test environment validated"
 }
 
 Task PublishModule -Depends PackageModule {
-    Write-Host "Publishing module to PowerShell Gallery..." -ForegroundColor Yellow
+    Write-Information "Publishing module to PowerShell Gallery..."
 
     if (-not $Publish) {
-        Write-Host "Publish flag not set. Skipping publication." -ForegroundColor Cyan
+        Write-Information "Publish flag not set. Skipping publication."
         return
     }
 
@@ -343,15 +343,28 @@ Task PublishModule -Depends PackageModule {
     try {
         $publishKey = Get-SimpleSetting -Section 'PowerShellGallery' -Name 'DefaultApiKey'
         if (-not $publishKey) {
-            Write-Host "PowerShell Gallery API key not found in settings." -ForegroundColor Red
-            Write-Host "Please set the API key using: Set-SimpleSetting -Section 'PowerShellGallery' -Name 'DefaultApiKey' -Value '<YourApiKey>'" -ForegroundColor Yellow
+            Write-Information "PowerShell Gallery API key not found in settings."
+            Write-Information "Please set the API key using: Set-SimpleSetting -Section 'PowerShellGallery' -Name 'DefaultApiKey' -Value '<YourApiKey>'"
             throw "PowerShell Gallery API key not found in settings."
         }
 
         $modulePublishPath = "$PublishPath\$ModuleName"
         Publish-Module -Path $modulePublishPath -NuGetApiKey $publishKey
 
-        Write-Host "✓ Module published to PowerShell Gallery successfully!" -ForegroundColor Green
+        Write-Information "Waiting for module to be published..."
+        # Wait for a few seconds to ensure the module is published
+        Start-Sleep -Seconds 2
+
+        $publishedModuleDetails = Find-Module -Name DevOpsCommands
+        $manifest = Test-ModuleManifest -Path $ManifestPath -ErrorAction Stop
+        if ($publishedModuleDetails.Version -ne $manifest.Version) {
+            Write-Error "Issue with module version mismatch after publishing. Expected: $($manifest.Version), Found: $($publishedModuleDetails.Version)"
+            throw "Module version mismatch after publishing"
+        } else {
+            Write-Information "Module version matches after publishing: $($publishedModuleDetails.Version)"
+        }
+
+        Write-Information "✓ Module published to PowerShell Gallery successfully!"
     } catch {
         Write-Error "Failed to publish module: $($_.Exception.Message)"
         throw
@@ -359,7 +372,7 @@ Task PublishModule -Depends PackageModule {
 }
 
 Task ShowHelp {
-    Write-Host @"
+    Write-Information @"
 Available PSake Tasks:
 ======================
 
@@ -392,10 +405,10 @@ Usage Examples:
   Invoke-PSake psakefile.ps1 -taskList Build
   Invoke-PSake psakefile.ps1 -taskList Test
   Invoke-PSake psakefile.ps1 -taskList Clean,Build,Test
-  Invoke-PSake psakefile.ps1 -taskList Publish -parameters @{Publish=$true}
+  Invoke-PSake psakefile.ps1 -taskList Publish -parameters @{Publish=`$true}
 
 Properties:
   SemVer    - Semantic version for the module (e.g., "1.2.3")
-  Publish   - Set to $true to enable publishing to PowerShell Gallery
-"@ -ForegroundColor Cyan
+  Publish   - Set to `$true to enable publishing to PowerShell Gallery
+"@
 }

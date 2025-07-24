@@ -8,7 +8,6 @@ schema: 2.0.0
 # Clear-NugetCache
 
 ## SYNOPSIS
-
 Clears all NuGet cache files from the machine.
 
 ## SYNTAX
@@ -18,24 +17,22 @@ Clear-NugetCache [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm] [<Com
 ```
 
 ## DESCRIPTION
-
 Runs 'dotnet nuget locals all --clear' to clear all files from the NuGet caches
-on the machine. This includes the global packages cache, HTTP cache, and temp
+on the machine.
+This includes the global packages cache, HTTP cache, and temp
 cache folders.
 
 ## EXAMPLES
 
 ### EXAMPLE 1
-
-```powershell
+```
 Clear-NugetCache
 ```
 
 Clears all NuGet cache files from the machine.
 
 ### EXAMPLE 2
-
-```powershell
+```
 Clear-NugetCache -WhatIf
 ```
 
@@ -44,9 +41,7 @@ Shows what cache files would be cleared without actually clearing them.
 ## PARAMETERS
 
 ### -WhatIf
-
-Shows what would happen if the cmdlet runs.
-The cmdlet is not run.
+Shows what would happen if the command runs without actually clearing the cache.
 
 ```yaml
 Type: SwitchParameter
@@ -61,8 +56,7 @@ Accept wildcard characters: False
 ```
 
 ### -Confirm
-
-Prompts you for confirmation before running the cmdlet.
+Prompts for confirmation before clearing the cache.
 
 ```yaml
 Type: SwitchParameter
@@ -77,7 +71,6 @@ Accept wildcard characters: False
 ```
 
 ### -ProgressAction
-
 {{ Fill ProgressAction Description }}
 
 ```yaml
@@ -97,11 +90,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### None
-
 ## OUTPUTS
-
-### System.Object
 
 ## NOTES
 

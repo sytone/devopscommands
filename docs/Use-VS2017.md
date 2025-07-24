@@ -8,7 +8,7 @@ schema: 2.0.0
 # Use-VS2017
 
 ## SYNOPSIS
-Load the build enviroment for Visul Studio 2017
+Load the build environment for Visual Studio 2017
 
 ## SYNTAX
 
@@ -17,7 +17,7 @@ Use-VS2017 [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Load the build enviroment for Visul Studio 2017 using the Visual Studio 2017 development settings.
+Load the build environment for Visual Studio 2017 using the Visual Studio 2017 development settings.
 
 ## EXAMPLES
 

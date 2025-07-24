@@ -18,7 +18,7 @@
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="wi">
           <maml:name>WhatIf</maml:name>
           <maml:description>
-            <maml:para>Shows what would happen if the cmdlet runs. The cmdlet is not run.</maml:para>
+            <maml:para>Shows what would happen if the command runs without actually clearing the cache.</maml:para>
           </maml:description>
           <dev:type>
             <maml:name>SwitchParameter</maml:name>
@@ -29,7 +29,7 @@
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="cf">
           <maml:name>Confirm</maml:name>
           <maml:description>
-            <maml:para>Prompts you for confirmation before running the cmdlet.</maml:para>
+            <maml:para>Prompts for confirmation before clearing the cache.</maml:para>
           </maml:description>
           <dev:type>
             <maml:name>SwitchParameter</maml:name>
@@ -55,7 +55,7 @@
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="wi">
         <maml:name>WhatIf</maml:name>
         <maml:description>
-          <maml:para>Shows what would happen if the cmdlet runs. The cmdlet is not run.</maml:para>
+          <maml:para>Shows what would happen if the command runs without actually clearing the cache.</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -67,7 +67,7 @@
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="cf">
         <maml:name>Confirm</maml:name>
         <maml:description>
-          <maml:para>Prompts you for confirmation before running the cmdlet.</maml:para>
+          <maml:para>Prompts for confirmation before clearing the cache.</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -89,26 +89,8 @@
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
     </command:parameters>
-    <command:inputTypes>
-      <command:inputType>
-        <dev:type>
-          <maml:name>None</maml:name>
-        </dev:type>
-        <maml:description>
-          <maml:para></maml:para>
-        </maml:description>
-      </command:inputType>
-    </command:inputTypes>
-    <command:returnValues>
-      <command:returnValue>
-        <dev:type>
-          <maml:name>System.Object</maml:name>
-        </dev:type>
-        <maml:description>
-          <maml:para></maml:para>
-        </maml:description>
-      </command:returnValue>
-    </command:returnValues>
+    <command:inputTypes />
+    <command:returnValues />
     <maml:alertSet>
       <maml:alert>
         <maml:para></maml:para>
@@ -174,11 +156,11 @@
       <command:verb>Start</command:verb>
       <command:noun>MSBuild</command:noun>
       <maml:description>
-        <maml:para>Runs MBuild with binary logging enabled by default</maml:para>
+        <maml:para>Runs MSBuild with binary logging enabled by default</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Wraps the call to msbuild using common settings to make command lind building repeatable.</maml:para>
+      <maml:para>Wraps the call to MSBuild using common settings to make command line building repeatable. By default, uses binary logging for better performance and structured log output that can be viewed with the MSBuild Structured Log Viewer.</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -186,7 +168,7 @@
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>AdditionalArguments</maml:name>
           <maml:description>
-            <maml:para>Allows you to add additional arguments to the msbuild command.</maml:para>
+            <maml:para>Allows you to add additional arguments to the MSBuild command. Can be a string or array of strings.</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
           <dev:type>
@@ -198,7 +180,7 @@
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>LogToConsole</maml:name>
           <maml:description>
-            <maml:para>Enabled Console logging, this will slow down the build process but give you immediate visual feedback. Handy for debugging.</maml:para>
+            <maml:para>Enables console logging, which will slow down the build process but give you immediate visual feedback. Handy for debugging build issues.</maml:para>
           </maml:description>
           <dev:type>
             <maml:name>SwitchParameter</maml:name>
@@ -209,7 +191,7 @@
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>Clean</maml:name>
           <maml:description>
-            <maml:para>Runs the build with the Clean step as the target before the main build.</maml:para>
+            <maml:para>Runs the build with the Clean target before the main build to remove all build artifacts.</maml:para>
           </maml:description>
           <dev:type>
             <maml:name>SwitchParameter</maml:name>
@@ -220,7 +202,7 @@
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>Restore</maml:name>
           <maml:description>
-            <maml:para>Runs the build with the Restore step as the target before the main build.</maml:para>
+            <maml:para>Runs the build with the Restore target before the main build to restore NuGet packages.</maml:para>
           </maml:description>
           <dev:type>
             <maml:name>SwitchParameter</maml:name>
@@ -231,7 +213,7 @@
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>CleanNugetCache</maml:name>
           <maml:description>
-            <maml:para>Call the nuget command to remove all cached packages, you will need to restore after this.</maml:para>
+            <maml:para>Calls 'dotnet nuget locals all --clear' to remove all cached packages. You will need to restore after this.</maml:para>
           </maml:description>
           <dev:type>
             <maml:name>SwitchParameter</maml:name>
@@ -242,7 +224,7 @@
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>Release</maml:name>
           <maml:description>
-            <maml:para>Make the build configuration Release and not Debug</maml:para>
+            <maml:para>Sets the build configuration to Release instead of Debug.</maml:para>
           </maml:description>
           <dev:type>
             <maml:name>SwitchParameter</maml:name>
@@ -253,7 +235,7 @@
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>Nuke</maml:name>
           <maml:description>
-            <maml:para>{{ Fill Nuke Description }}</maml:para>
+            <maml:para>Deletes all folders with names specified in NukeFolders parameter (default: bin, obj, node_modules, out, TestResults).</maml:para>
           </maml:description>
           <dev:type>
             <maml:name>SwitchParameter</maml:name>
@@ -264,7 +246,7 @@
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>GitNuke</maml:name>
           <maml:description>
-            <maml:para>Deletes all extra files, resets the git repo to the last commit and pulls the latest changes.</maml:para>
+            <maml:para>Performs a complete git reset: deletes all extra files, resets the git repo to the last commit, and pulls the latest changes. WARNING: This will permanently delete uncommitted changes.</maml:para>
           </maml:description>
           <dev:type>
             <maml:name>SwitchParameter</maml:name>
@@ -275,7 +257,7 @@
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>ShowBuildSummary</maml:name>
           <maml:description>
-            <maml:para>{{ Fill ShowBuildSummary Description }}</maml:para>
+            <maml:para>Shows the build performance summary in the console output when LogToConsole is enabled.</maml:para>
           </maml:description>
           <dev:type>
             <maml:name>SwitchParameter</maml:name>
@@ -286,7 +268,7 @@
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>SkipToolsRestore</maml:name>
           <maml:description>
-            <maml:para>By default a 'dotnet tool restore' is run before the build, this will skip that step.</maml:para>
+            <maml:para>By default, 'dotnet tool restore' is run before the build. This switch skips that step.</maml:para>
           </maml:description>
           <dev:type>
             <maml:name>SwitchParameter</maml:name>
@@ -297,7 +279,7 @@
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>LogVerbosity</maml:name>
           <maml:description>
-            <maml:para>{{ Fill LogVerbosity Description }}</maml:para>
+            <maml:para>Sets the verbosity level for MSBuild logging. Valid values: quiet, minimal, normal, detailed, diagnostic. Default is 'minimal'.</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
           <dev:type>
@@ -309,14 +291,38 @@
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>NukeFolders</maml:name>
           <maml:description>
-            <maml:para>{{ Fill NukeFolders Description }}</maml:para>
+            <maml:para>Specifies which folder names to delete when using the Nuke parameter. Default folders: bin, obj, node_modules, out, TestResults.</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
           <dev:type>
             <maml:name>Object</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>@("bin", "obj", "node_modules", "out")</dev:defaultValue>
+          <dev:defaultValue>@("bin", "obj", "node_modules", "out", "TestResults")</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>MessageCallback</maml:name>
+          <maml:description>
+            <maml:para>A ScriptBlock that handles informational messages during the build process. Default writes to Write-Information.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">ScriptBlock</command:parameterValue>
+          <dev:type>
+            <maml:name>ScriptBlock</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>{ param($message) Write-Information "$message" }</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>ErrorCallback</maml:name>
+          <maml:description>
+            <maml:para>A ScriptBlock that handles error messages during the build process. Default writes to Write-Error.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">ScriptBlock</command:parameterValue>
+          <dev:type>
+            <maml:name>ScriptBlock</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>{ param($exception) Write-Error $exception }</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="wi">
           <maml:name>WhatIf</maml:name>
@@ -358,7 +364,7 @@
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>AdditionalArguments</maml:name>
         <maml:description>
-          <maml:para>Allows you to add additional arguments to the msbuild command.</maml:para>
+          <maml:para>Allows you to add additional arguments to the MSBuild command. Can be a string or array of strings.</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
         <dev:type>
@@ -370,7 +376,7 @@
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>LogToConsole</maml:name>
         <maml:description>
-          <maml:para>Enabled Console logging, this will slow down the build process but give you immediate visual feedback. Handy for debugging.</maml:para>
+          <maml:para>Enables console logging, which will slow down the build process but give you immediate visual feedback. Handy for debugging build issues.</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -382,7 +388,7 @@
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>Clean</maml:name>
         <maml:description>
-          <maml:para>Runs the build with the Clean step as the target before the main build.</maml:para>
+          <maml:para>Runs the build with the Clean target before the main build to remove all build artifacts.</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -394,7 +400,7 @@
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>Restore</maml:name>
         <maml:description>
-          <maml:para>Runs the build with the Restore step as the target before the main build.</maml:para>
+          <maml:para>Runs the build with the Restore target before the main build to restore NuGet packages.</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -406,7 +412,7 @@
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>CleanNugetCache</maml:name>
         <maml:description>
-          <maml:para>Call the nuget command to remove all cached packages, you will need to restore after this.</maml:para>
+          <maml:para>Calls 'dotnet nuget locals all --clear' to remove all cached packages. You will need to restore after this.</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -418,7 +424,7 @@
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>Release</maml:name>
         <maml:description>
-          <maml:para>Make the build configuration Release and not Debug</maml:para>
+          <maml:para>Sets the build configuration to Release instead of Debug.</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -430,7 +436,7 @@
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>Nuke</maml:name>
         <maml:description>
-          <maml:para>{{ Fill Nuke Description }}</maml:para>
+          <maml:para>Deletes all folders with names specified in NukeFolders parameter (default: bin, obj, node_modules, out, TestResults).</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -442,7 +448,7 @@
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>GitNuke</maml:name>
         <maml:description>
-          <maml:para>Deletes all extra files, resets the git repo to the last commit and pulls the latest changes.</maml:para>
+          <maml:para>Performs a complete git reset: deletes all extra files, resets the git repo to the last commit, and pulls the latest changes. WARNING: This will permanently delete uncommitted changes.</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -454,7 +460,7 @@
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>ShowBuildSummary</maml:name>
         <maml:description>
-          <maml:para>{{ Fill ShowBuildSummary Description }}</maml:para>
+          <maml:para>Shows the build performance summary in the console output when LogToConsole is enabled.</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -466,7 +472,7 @@
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>SkipToolsRestore</maml:name>
         <maml:description>
-          <maml:para>By default a 'dotnet tool restore' is run before the build, this will skip that step.</maml:para>
+          <maml:para>By default, 'dotnet tool restore' is run before the build. This switch skips that step.</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -478,7 +484,7 @@
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>LogVerbosity</maml:name>
         <maml:description>
-          <maml:para>{{ Fill LogVerbosity Description }}</maml:para>
+          <maml:para>Sets the verbosity level for MSBuild logging. Valid values: quiet, minimal, normal, detailed, diagnostic. Default is 'minimal'.</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -490,14 +496,38 @@
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>NukeFolders</maml:name>
         <maml:description>
-          <maml:para>{{ Fill NukeFolders Description }}</maml:para>
+          <maml:para>Specifies which folder names to delete when using the Nuke parameter. Default folders: bin, obj, node_modules, out, TestResults.</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
         <dev:type>
           <maml:name>Object</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>@("bin", "obj", "node_modules", "out")</dev:defaultValue>
+        <dev:defaultValue>@("bin", "obj", "node_modules", "out", "TestResults")</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>MessageCallback</maml:name>
+        <maml:description>
+          <maml:para>A ScriptBlock that handles informational messages during the build process. Default writes to Write-Information.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">ScriptBlock</command:parameterValue>
+        <dev:type>
+          <maml:name>ScriptBlock</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>{ param($message) Write-Information "$message" }</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>ErrorCallback</maml:name>
+        <maml:description>
+          <maml:para>A ScriptBlock that handles error messages during the build process. Default writes to Write-Error.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">ScriptBlock</command:parameterValue>
+        <dev:type>
+          <maml:name>ScriptBlock</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>{ param($exception) Write-Error $exception }</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="wi">
         <maml:name>WhatIf</maml:name>
@@ -548,7 +578,49 @@
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
         <dev:code>Start-MSBuild</dev:code>
         <dev:remarks>
-          <maml:para></maml:para>
+          <maml:para>Runs a basic debug build with binary logging enabled.</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>Start-MSBuild -Release -Clean</dev:code>
+        <dev:remarks>
+          <maml:para>Runs a clean release build.</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 3 --------------------------</maml:title>
+        <dev:code>Start-MSBuild -LogToConsole -LogVerbosity detailed</dev:code>
+        <dev:remarks>
+          <maml:para>Runs a build with detailed console output instead of binary logging.</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 4 --------------------------</maml:title>
+        <dev:code>Start-MSBuild -Restore -Clean -Release</dev:code>
+        <dev:remarks>
+          <maml:para>Performs a complete build: restore packages, clean artifacts, then build in release mode.</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 5 --------------------------</maml:title>
+        <dev:code>Start-MSBuild -Nuke -AdditionalArguments @("/p:PublishProfile=FolderProfile", "/p:PublishUrl=bin\Release\Publish")</dev:code>
+        <dev:remarks>
+          <maml:para>Deletes build folders and runs build with additional MSBuild arguments.</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 6 --------------------------</maml:title>
+        <dev:code>Start-MSBuild -CleanNugetCache -Restore</dev:code>
+        <dev:remarks>
+          <maml:para>Clears the NuGet cache and restores packages before building.</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 7 --------------------------</maml:title>
+        <dev:code>Start-MSBuild -LogToConsole -ShowBuildSummary -LogVerbosity normal</dev:code>
+        <dev:remarks>
+          <maml:para>Runs build with console logging, showing build performance summary with normal verbosity.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -787,7 +859,7 @@
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Installs the Microsoft.VisualStudio.Services.NuGet.AuthHelper nuget in a '.tools'  folder in your profile. It then runs it against a nuget.config in the directory  you ececuted the command in. This will auth you against all the endpoints in  the nuget.config and cache them. This allows for faster and simpler restore  from the command line.</maml:para>
+      <maml:para>Installs the Microsoft.VisualStudio.Services.NuGet.AuthHelper nuget in a '.tools' folder in your profile. It then runs it against a nuget.config in the directory you executed the command in. This will auth you against all the endpoints in the nuget.config and cache them. This allows for faster and simpler restore from the command line.</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -914,11 +986,11 @@
       <command:verb>Use</command:verb>
       <command:noun>VS2017</command:noun>
       <maml:description>
-        <maml:para>Load the build enviroment for Visul Studio 2017</maml:para>
+        <maml:para>Load the build environment for Visual Studio 2017</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Load the build enviroment for Visul Studio 2017 using the Visual Studio 2017 development settings.</maml:para>
+      <maml:para>Load the build environment for Visual Studio 2017 using the Visual Studio 2017 development settings.</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -950,11 +1022,11 @@
       <command:verb>Use</command:verb>
       <command:noun>VS2019</command:noun>
       <maml:description>
-        <maml:para>Load the build enviroment for Visul Studio 2019</maml:para>
+        <maml:para>Load the build environment for Visual Studio 2019</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Load the build enviroment for Visul Studio 2019 using the Visual Studio 2019 development settings.</maml:para>
+      <maml:para>Load the build environment for Visual Studio 2019 using the Visual Studio 2019 development settings.</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -996,7 +1068,7 @@
     <command:examples>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-        <dev:code>Use-2019</dev:code>
+        <dev:code>Use-VS2019</dev:code>
         <dev:remarks>
           <maml:para></maml:para>
         </dev:remarks>
@@ -1010,11 +1082,11 @@
       <command:verb>Use</command:verb>
       <command:noun>VS2022</command:noun>
       <maml:description>
-        <maml:para>{{ Fill in the Synopsis }}</maml:para>
+        <maml:para>Load the build environment for Visual Studio 2022</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>{{ Fill in the Description }}</maml:para>
+      <maml:para>Load the build environment for Visual Studio 2022 using the Visual Studio 2022 development settings.</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -1046,26 +1118,8 @@
         <dev:defaultValue>False</dev:defaultValue>
       </command:parameter>
     </command:parameters>
-    <command:inputTypes>
-      <command:inputType>
-        <dev:type>
-          <maml:name>None</maml:name>
-        </dev:type>
-        <maml:description>
-          <maml:para></maml:para>
-        </maml:description>
-      </command:inputType>
-    </command:inputTypes>
-    <command:returnValues>
-      <command:returnValue>
-        <dev:type>
-          <maml:name>System.Object</maml:name>
-        </dev:type>
-        <maml:description>
-          <maml:para></maml:para>
-        </maml:description>
-      </command:returnValue>
-    </command:returnValues>
+    <command:inputTypes />
+    <command:returnValues />
     <maml:alertSet>
       <maml:alert>
         <maml:para></maml:para>
@@ -1073,10 +1127,10 @@
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Use-VS2022</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para></maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>

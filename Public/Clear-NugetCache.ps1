@@ -23,19 +23,19 @@ function Clear-NugetCache {
     param ()
 
     begin {
-        wi (Get-ModuleHeaderInfo)
+        Write-Information (Get-ModuleHeaderInfo)
     }
 
     process {
         if (Get-Command dotnet -ErrorAction SilentlyContinue) {
-            wv '.NET CLI found in path.'
+            Write-Verbose '.NET CLI found in path.'
 
             if ($PSCmdlet.ShouldProcess('NuGet Cache', 'Clear all cache files')) {
-                wi 'Clearing all NuGet cache files...'
+                Write-Information 'Clearing all NuGet cache files...'
                 & dotnet nuget locals all --clear
-                wi 'NuGet cache cleared successfully.'
+                Write-Information 'NuGet cache cleared successfully.'
             } else {
-                wi "Would run: 'dotnet nuget locals all --clear'"
+                Write-Information "Would run: 'dotnet nuget locals all --clear'"
             }
         } else {
             throw '.NET CLI (dotnet) not found in path. Please install the .NET SDK.'

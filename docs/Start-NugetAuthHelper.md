@@ -18,13 +18,13 @@ Start-NugetAuthHelper [[-NugetConfigPath] <String>] [-ProgressAction <ActionPref
 ```
 
 ## DESCRIPTION
-Installs the Microsoft.VisualStudio.Services.NuGet.AuthHelper nuget in a '.tools' 
+Installs the Microsoft.VisualStudio.Services.NuGet.AuthHelper nuget in a '.tools'
 folder in your profile.
-It then runs it against a nuget.config in the directory 
-you ececuted the command in.
-This will auth you against all the endpoints in 
+It then runs it against a nuget.config in the directory
+you executed the command in.
+This will auth you against all the endpoints in
 the nuget.config and cache them.
-This allows for faster and simpler restore 
+This allows for faster and simpler restore
 from the command line.
 
 ## EXAMPLES
@@ -52,7 +52,8 @@ Accept wildcard characters: False
 ```
 
 ### -WhatIf
-Shows what would happen if the cmdlet runs. The cmdlet is not run.
+Shows what would happen if the cmdlet runs.
+The cmdlet is not run.
 
 ```yaml
 Type: SwitchParameter

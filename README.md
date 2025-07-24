@@ -85,8 +85,8 @@ If you want to override the default settings put these variables at the end of y
 
 | Setting                 | Value                                                                                          | Description                                   |
 | ----------------------- | ---------------------------------------------------------------------------------------------- | --------------------------------------------- |
-| StructuredLogViewerPath | "$env:USERPROFILE\AppData\Local\MSBuildStructuredLogViewer\app-2.1.88\StructuredLogViewer.exe" | Viewer for the Binary log produced by MSBuild |
-| MsBuildArguments | '/nologo', '/m', '/nr:false', '/p:TreatWarningsAsErrors="true"', '/p:Platform="x64"' | Arguments passed to MSBuild on every execution |
+| StructuredLogViewerPath | "$env:\AppData\Local\MSBuildStructuredLogViewer\app-2.1.88\StructuredLogViewer.exe" | Viewer for the Binary log produced by MSBuild |
+| MsBuildArguments | '/noLogo', '/m', '/nr:false', '/p:TreatWarningsAsErrors="true"', '/p:Platform="x64"' | Arguments passed to MSBuild on every execution |
 | VsDefault | 17 | Version of Visual Studio to import the console settings from |
 
 #### Update Default Settings
@@ -96,7 +96,7 @@ Settings are controlled by the SimpleSettings commands, this is a dependency of 
 ``` PowerShell
 Set-SimpleSetting -Name "StructuredLogViewerPath" -Section "DevOpsCommands" -Value "$env:USERPROFILE\AppData\Local\MSBuildStructuredLogViewer\app-2.0.64\StructuredLogViewer.exe"
 
-Set-SimpleSetting -Name "MsBuildArguments" -Section "DevOpsCommands" -Value @('/nologo', '/m', '/nr:false', '/p:TreatWarningsAsErrors="true"', '/p:Platform="x64"')
+Set-SimpleSetting -Name "MsBuildArguments" -Section "DevOpsCommands" -Value @('/noLogo', '/m', '/nr:false', '/p:TreatWarningsAsErrors="true"', '/p:Platform="x64"')
 
 # 15 == VS 2017
 # 16 == VS 2019

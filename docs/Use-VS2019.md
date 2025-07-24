@@ -8,8 +8,7 @@ schema: 2.0.0
 # Use-VS2019
 
 ## SYNOPSIS
-
-Load the build enviroment for Visul Studio 2019
+Load the build environment for Visual Studio 2019
 
 ## SYNTAX
 
@@ -18,21 +17,18 @@ Use-VS2019 [-UsePreview] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-
-Load the build enviroment for Visul Studio 2019 using the Visual Studio 2019 development settings.
+Load the build environment for Visual Studio 2019 using the Visual Studio 2019 development settings.
 
 ## EXAMPLES
 
 ### EXAMPLE 1
-
 ```
-Use-2019
+Use-VS2019
 ```
 
 ## PARAMETERS
 
 ### -UsePreview
-
 {{ Fill UsePreview Description }}
 
 ```yaml
