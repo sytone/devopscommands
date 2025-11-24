@@ -147,7 +147,7 @@ Task GenerateMarkdownHelp -Depends UpdateManifest {
     Import-Module PlatyPS -Force
 
     # Generate new markdown help files
-    New-MarkdownHelp -Module $ModuleName -OutputFolder $DocsPath -ErrorAction SilentlyContinue
+    New-MarkdownHelp -Module $ModuleName -OutputFolder $DocsPath -Force
 
     # Update existing markdown help
     Update-MarkdownHelp $DocsPath
@@ -331,7 +331,7 @@ Task PublishModule -Depends PackageModule {
     Write-Information "Publishing module to PowerShell Gallery..."
 
     if (-not $Publish) {
-        Write-Information "Publish flag not set. Skipping publication."
+        Write-Warning "Publish flag not set. Skipping publication."
         return
     }
 
@@ -342,9 +342,9 @@ Task PublishModule -Depends PackageModule {
 
     try {
         $publishKey = Get-SimpleSetting -Section 'PowerShellGallery' -Name 'DefaultApiKey'
-        if (-not $publishKey) {
-            Write-Information "PowerShell Gallery API key not found in settings."
-            Write-Information "Please set the API key using: Set-SimpleSetting -Section 'PowerShellGallery' -Name 'DefaultApiKey' -Value '<YourApiKey>'"
+        if ($null -eq $publishKey) {
+            Write-Error "PowerShell Gallery API key not found in settings."
+            Write-Error "Please set the API key using: Set-SimpleSetting -Section 'PowerShellGallery' -Name 'DefaultApiKey' -Value '<YourApiKey>'"
             throw "PowerShell Gallery API key not found in settings."
         }
 
@@ -367,7 +367,7 @@ Task PublishModule -Depends PackageModule {
         Write-Information "✓ Module published to PowerShell Gallery successfully!"
     } catch {
         Write-Error "Failed to publish module: $($_.Exception.Message)"
-        throw
+        throw "Failed to publish module: $($_.Exception.Message)"
     }
 }
 

@@ -1,4 +1,4 @@
-function Use-VS2022 {
+function Use-VS2026 {
     <#
     .SYNOPSIS
         Load the build environment for Visual Studio 2026

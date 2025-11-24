@@ -123,6 +123,7 @@ This project uses PSake for build automation. The build tasks are defined in `ps
 - PSake module: `Install-Module PSake -Scope CurrentUser`
 - Pester module (for testing): `Install-Module Pester -Scope CurrentUser`
 - PlatyPS module (for documentation): `Install-Module PlatyPS -Scope CurrentUser`
+- PlatyPS module (for documentation): `Install-Module SimpleSettings -Scope CurrentUser`
 
 ### Available Build Tasks
 

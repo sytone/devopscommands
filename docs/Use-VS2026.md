@@ -5,19 +5,19 @@ online version:
 schema: 2.0.0
 ---
 
-# Use-VS2022
+# Use-VS2026
 
 ## SYNOPSIS
-Load the build environment for Visual Studio 2022
+Load the build environment for Visual Studio 2026
 
 ## SYNTAX
 
 ```
-Use-VS2022 [-UsePreview] [<CommonParameters>]
+Use-VS2026 [-UsePreview] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Load the build environment for Visual Studio 2022 using the Visual Studio 2022 development settings.
+Load the build environment for Visual Studio 2026 using the Visual Studio 2026 development settings.
 
 ## EXAMPLES
 
