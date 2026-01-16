@@ -173,6 +173,45 @@ The project includes VS Code tasks that integrate with the PSake build system:
 - **Ctrl+Shift+P** → **Tasks: Run Task** → **Build** (or use **Ctrl+Shift+B**)
 - **Ctrl+Shift+P** → **Tasks: Run Task** → **Test** (or use **Ctrl+Shift+T**)
 
+### CI/CD Pipeline
+
+This project uses GitHub Actions for continuous integration and deployment. The workflow automatically:
+
+#### On Pull Requests and Pushes to Main/Develop
+- Runs PSScriptAnalyzer to check code quality
+- Builds the PowerShell module
+- Runs all Pester tests
+- Uploads test results as artifacts
+
+#### On Pushes to Main Branch Only
+- Automatically bumps the version based on commit messages (follows [Conventional Commits](https://www.conventionalcommits.org/)):
+  - `feat!:` or `BREAKING CHANGE:` → Major version bump (e.g., 1.5.3 → 2.0.0)
+  - `feat:` or `feature:` → Minor version bump (e.g., 1.5.3 → 1.6.0)
+  - All other commits → Patch version bump (e.g., 1.5.3 → 1.5.4)
+- Creates a Git tag for the new version
+- Publishes the module to PowerShell Gallery (requires `PSGALLERY_API_KEY` secret)
+- Creates a GitHub release with release notes
+
+#### Manual Workflow Trigger
+You can also manually trigger the workflow with a specific version:
+1. Go to Actions → PowerShell Module CI/CD → Run workflow
+2. Enter the desired version (e.g., `1.6.0`)
+
+#### Setting Up PowerShell Gallery Publishing
+
+To enable automatic publishing to PowerShell Gallery:
+
+1. Obtain an API key from [PowerShell Gallery](https://www.powershellgallery.com/account/apikeys)
+2. Add the API key as a repository secret named `PSGALLERY_API_KEY`:
+   - Go to repository Settings → Secrets and variables → Actions
+   - Click "New repository secret"
+   - Name: `PSGALLERY_API_KEY`
+   - Value: Your PowerShell Gallery API key
+
+#### Workflow Status
+
+Check the workflow status in the [Actions tab](https://github.com/sytone/devopscommands/actions) or look for the status badge on pull requests.
+
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
