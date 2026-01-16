@@ -24,7 +24,7 @@ function Use-VS2022 {
 
     process {
 
-        if (-not (Test-Path (Split-Path $shellPath -Parent))) {
+        if (-not $shellPath -or -not (Test-Path (Split-Path $shellPath -Parent))) {
             $completedSuccessfully = $false
         } else {
 
