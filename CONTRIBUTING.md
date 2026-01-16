@@ -156,9 +156,9 @@ fix: resolve issue with VS2022 environment variable detection
 
 docs: add examples for Use-VS2019 command
 
-feat(msbuild)!: change default platform to AnyCPU
+feat(msbuild)!: change default platform to Any CPU
 
-BREAKING CHANGE: The default platform has changed from x64 to AnyCPU.
+BREAKING CHANGE: The default platform has changed from x64 to Any CPU.
 Users who need x64 builds must now specify it explicitly.
 
 test: add comprehensive tests for Start-MsBuild
