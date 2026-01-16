@@ -5,7 +5,7 @@ function Use-VS2026 {
     .DESCRIPTION
         Load the build environment for Visual Studio 2026 using the Visual Studio 2026 development settings.
     .EXAMPLE
-        Use-VS2022
+        Use-VS2026
     #>
     param (
         [switch] $UsePreview

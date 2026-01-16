@@ -28,6 +28,11 @@ function Get-VisualStudioDetail {
             }
         }
 
+        # Handle case where no installation is found
+        if (-not $vsLocation) {
+            return $null, $null, $false
+        }
+
         return ("$($vsLocation.installationPath)\Common7\Tools\Launch-VsDevShell.ps1"), ($vsLocation.displayName), $usedPreviewFallback
     }
 
