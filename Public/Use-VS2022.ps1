@@ -19,7 +19,7 @@ function Use-VS2022 {
             Repair-EnvironmentVariable -EnvironmentVariableName $_.Name
         }
 
-        $shellPath, $version = Get-VisualStudioDetail -MajorVersion 17 -UsePreview:$UsePreview
+        $shellPath, $version, $usedPreviewFallback = Get-VisualStudioDetail -MajorVersion 17 -UsePreview:$UsePreview
     }
 
     process {
@@ -31,6 +31,9 @@ function Use-VS2022 {
             Push-Location (Split-Path $shellPath -Parent)
             Write-Information "------------------------------------------------------------"
             Write-Information " * Setting up environment..."
+            if ($usedPreviewFallback) {
+                Write-Warning "Release version not found. Using Preview version as fallback."
+            }
             Write-Information "   - $version Command Prompt processing."
             & $shellPath
             Pop-Location
