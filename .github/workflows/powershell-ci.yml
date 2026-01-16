@@ -1,0 +1,277 @@
+name: PowerShell Module CI/CD
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - '**.ps1'
+      - '**.psm1'
+      - '**.psd1'
+      - 'psakefile.ps1'
+      - 'module_config.json'
+      - '.github/workflows/powershell-ci.yml'
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - '**.ps1'
+      - '**.psm1'
+      - '**.psd1'
+      - 'psakefile.ps1'
+      - 'module_config.json'
+      - '.github/workflows/powershell-ci.yml'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g., 1.5.4)'
+        required: false
+        type: string
+
+env:
+  MODULE_NAME: DevOpsCommands
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install required PowerShell modules
+        shell: pwsh
+        run: |
+          Write-Host "Installing required modules..."
+          Install-Module -Name PSake -Force -Scope CurrentUser -SkipPublisherCheck
+          Install-Module -Name Pester -MinimumVersion 5.0 -Force -Scope CurrentUser -SkipPublisherCheck
+          Install-Module -Name PlatyPS -Force -Scope CurrentUser -SkipPublisherCheck
+          Install-Module -Name SimpleSettings -Force -Scope CurrentUser -SkipPublisherCheck
+          Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser -SkipPublisherCheck
+
+      - name: Run PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Write-Host "Running PSScriptAnalyzer..."
+          $results = Invoke-ScriptAnalyzer -Path . -Recurse -Settings PSScriptAnalyzerSettings.psd1
+          if ($results) {
+            $results | Format-Table -AutoSize
+            $errorResults = $results | Where-Object { $_.Severity -eq 'Error' }
+            if ($errorResults) {
+              throw "PSScriptAnalyzer found $($errorResults.Count) error(s)"
+            }
+            Write-Host "PSScriptAnalyzer found $($results.Count) warning(s) but no errors"
+          } else {
+            Write-Host "PSScriptAnalyzer found no issues"
+          }
+
+      - name: Build module
+        shell: pwsh
+        run: |
+          Write-Host "Building module..."
+          Import-Module PSake
+          Invoke-PSake -buildFile .\psakefile.ps1 -taskList Build -nologo
+          if (-not $psake.build_success) {
+            throw "Build failed"
+          }
+
+      - name: Run tests
+        shell: pwsh
+        run: |
+          Write-Host "Running tests..."
+          Import-Module PSake
+          Invoke-PSake -buildFile .\psakefile.ps1 -taskList RunTests -nologo
+          if (-not $psake.build_success) {
+            throw "Tests failed"
+          }
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            TestResults_*.xml
+            PesterResults_*.xml
+          retention-days: 30
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: module-build
+          path: publish/
+          retention-days: 30
+
+  version-and-publish:
+    name: Version and Publish
+    needs: build-and-test
+    runs-on: windows-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install required PowerShell modules
+        shell: pwsh
+        run: |
+          Write-Host "Installing required modules..."
+          Install-Module -Name PSake -Force -Scope CurrentUser -SkipPublisherCheck
+          Install-Module -Name Pester -MinimumVersion 5.0 -Force -Scope CurrentUser -SkipPublisherCheck
+          Install-Module -Name PlatyPS -Force -Scope CurrentUser -SkipPublisherCheck
+          Install-Module -Name SimpleSettings -Force -Scope CurrentUser -SkipPublisherCheck
+
+      - name: Determine version bump
+        id: version
+        shell: pwsh
+        run: |
+          # Get current version from manifest
+          $manifest = Import-PowerShellDataFile -Path ".\$env:MODULE_NAME.psd1"
+          $currentVersion = $manifest.ModuleVersion
+          Write-Host "Current version: $currentVersion"
+          
+          # Parse version
+          $versionParts = $currentVersion.Split('.')
+          $major = [int]$versionParts[0]
+          $minor = [int]$versionParts[1]
+          $patch = [int]$versionParts[2]
+          
+          # Check if manual version was provided
+          if ("${{ github.event.inputs.version }}" -ne "") {
+            $newVersion = "${{ github.event.inputs.version }}"
+            Write-Host "Using manually specified version: $newVersion"
+          } else {
+            # Get latest commit message
+            $commitMessage = git log -1 --pretty=%B
+            Write-Host "Latest commit message: $commitMessage"
+            
+            # Determine version bump based on commit message (conventional commits)
+            if ($commitMessage -match "^(feat|feature)(\(.*\))?!:|^BREAKING CHANGE:") {
+              # Major version bump for breaking changes
+              $major++
+              $minor = 0
+              $patch = 0
+              Write-Host "Breaking change detected - bumping major version"
+            } elseif ($commitMessage -match "^(feat|feature)(\(.*\))?:") {
+              # Minor version bump for new features
+              $minor++
+              $patch = 0
+              Write-Host "Feature detected - bumping minor version"
+            } else {
+              # Patch version bump for everything else (fix, docs, chore, etc.)
+              $patch++
+              Write-Host "Standard change detected - bumping patch version"
+            }
+            
+            $newVersion = "$major.$minor.$patch"
+          }
+          
+          Write-Host "New version: $newVersion"
+          echo "new_version=$newVersion" >> $env:GITHUB_OUTPUT
+          echo "current_version=$currentVersion" >> $env:GITHUB_OUTPUT
+
+      - name: Update version in manifest
+        shell: pwsh
+        run: |
+          $newVersion = "${{ steps.version.outputs.new_version }}"
+          Write-Host "Updating manifest to version: $newVersion"
+          
+          # Update the manifest file
+          $manifestPath = ".\$env:MODULE_NAME.psd1"
+          $content = Get-Content $manifestPath -Raw
+          $content = $content -replace "ModuleVersion = '[\d\.]+'", "ModuleVersion = '$newVersion'"
+          Set-Content -Path $manifestPath -Value $content -NoNewline
+          
+          Write-Host "Manifest updated successfully"
+
+      - name: Commit version bump
+        shell: pwsh
+        run: |
+          $newVersion = "${{ steps.version.outputs.new_version }}"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add "$env:MODULE_NAME.psd1"
+          git diff --staged --quiet || git commit -m "chore: bump version to $newVersion [skip ci]"
+          git push
+
+      - name: Create Git tag
+        shell: pwsh
+        run: |
+          $newVersion = "${{ steps.version.outputs.new_version }}"
+          git tag -a "v$newVersion" -m "Release version $newVersion"
+          git push origin "v$newVersion"
+
+      - name: Build module for publishing
+        shell: pwsh
+        run: |
+          Write-Host "Building module for publishing..."
+          Import-Module PSake
+          $newVersion = "${{ steps.version.outputs.new_version }}"
+          Invoke-PSake -buildFile .\psakefile.ps1 -taskList Build -parameters @{"SemVer"=$newVersion} -nologo
+          if (-not $psake.build_success) {
+            throw "Build failed"
+          }
+
+      - name: Publish to PowerShell Gallery
+        shell: pwsh
+        env:
+          PSGALLERY_API_KEY: ${{ secrets.PSGALLERY_API_KEY }}
+        run: |
+          if ([string]::IsNullOrEmpty($env:PSGALLERY_API_KEY)) {
+            Write-Warning "PowerShell Gallery API key not found. Skipping publish."
+            Write-Warning "To enable publishing, add PSGALLERY_API_KEY secret to the repository."
+            exit 0
+          }
+          
+          Write-Host "Publishing module to PowerShell Gallery..."
+          $modulePath = ".\publish\$env:MODULE_NAME"
+          
+          if (-not (Test-Path $modulePath)) {
+            throw "Module path not found: $modulePath"
+          }
+          
+          try {
+            Publish-Module -Path $modulePath -NuGetApiKey $env:PSGALLERY_API_KEY -ErrorAction Stop
+            Write-Host "Module published successfully to PowerShell Gallery"
+          } catch {
+            Write-Error "Failed to publish module: $_"
+            throw
+          }
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.version.outputs.new_version }}
+          release_name: Release v${{ steps.version.outputs.new_version }}
+          body: |
+            ## Changes in v${{ steps.version.outputs.new_version }}
+            
+            This release was automatically created by the CI/CD pipeline.
+            
+            ### Installation
+            ```powershell
+            Install-Module -Name ${{ env.MODULE_NAME }} -RequiredVersion ${{ steps.version.outputs.new_version }}
+            ```
+            
+            ### Update
+            ```powershell
+            Update-Module -Name ${{ env.MODULE_NAME }}
+            ```
+            
+            See the [changelog](https://github.com/${{ github.repository }}/compare/v${{ steps.version.outputs.current_version }}...v${{ steps.version.outputs.new_version }}) for details.
+          draft: false
+          prerelease: false
