@@ -14,13 +14,28 @@ function Get-VisualStudioDetail {
         # Find the correct installation based on the parameters. Start with major version filtering.
         $vsLocationDetails = $vsLocationDetails | Where-Object { $_.installationVersion -like "$MajorVersion.*" }
 
+        $usedPreviewFallback = $false
+
         if ($UsePreview) {
             $vsLocation = $vsLocationDetails | Where-Object { $_.channelId -like "*Preview" }
         } else {
             $vsLocation = $vsLocationDetails | Where-Object { $_.channelId -notlike "*Preview" }
+            
+            # If release version not found, fallback to preview version
+            if (-not $vsLocation) {
+                $vsLocation = $vsLocationDetails | Where-Object { $_.channelId -like "*Preview" }
+                if ($vsLocation) {
+                    $usedPreviewFallback = $true
+                }
+            }
         }
 
-        return ("$($vsLocation.installationPath)\Common7\Tools\Launch-VsDevShell.ps1"), ($vsLocation.displayName)
+        # Handle case where no installation is found
+        if (-not $vsLocation) {
+            return $null, $null, $false
+        }
+
+        return ("$($vsLocation.installationPath)\Common7\Tools\Launch-VsDevShell.ps1"), ($vsLocation.displayName), $usedPreviewFallback
     }
 
     end {

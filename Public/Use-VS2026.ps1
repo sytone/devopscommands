@@ -5,7 +5,7 @@ function Use-VS2026 {
     .DESCRIPTION
         Load the build environment for Visual Studio 2026 using the Visual Studio 2026 development settings.
     .EXAMPLE
-        Use-VS2022
+        Use-VS2026
     #>
     param (
         [switch] $UsePreview
@@ -19,18 +19,21 @@ function Use-VS2026 {
             Repair-EnvironmentVariable -EnvironmentVariableName $_.Name
         }
 
-        $shellPath, $version = Get-VisualStudioDetail -MajorVersion 18 -UsePreview:$UsePreview
+        $shellPath, $version, $usedPreviewFallback = Get-VisualStudioDetail -MajorVersion 18 -UsePreview:$UsePreview
     }
 
     process {
 
-        if (-not (Test-Path (Split-Path $shellPath -Parent))) {
+        if (-not $shellPath -or -not (Test-Path (Split-Path $shellPath -Parent))) {
             $completedSuccessfully = $false
         } else {
 
             Push-Location (Split-Path $shellPath -Parent)
             Write-Information "------------------------------------------------------------"
             Write-Information " * Setting up environment..."
+            if ($usedPreviewFallback) {
+                Write-Warning "Release version not found. Using Preview version as fallback."
+            }
             Write-Information "   - $version Command Prompt processing."
             & $shellPath
             Pop-Location
