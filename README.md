@@ -214,12 +214,24 @@ Check the workflow status in the [Actions tab](https://github.com/sytone/devopsc
 
 ## Contributing
 
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+Please see our [Contributing Guide](CONTRIBUTING.md) for detailed information on:
+
+- Development setup and workflow
+- Commit message conventions (for automatic versioning)
+- Code style guidelines
+- Testing requirements
+- CI/CD pipeline information
+
+### Quick Start
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-   Note: Use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) format for the commit/Pull Request
+3. Commit your Changes using [Conventional Commits](https://www.conventionalcommits.org/) format:
+   - `feat:` for new features (minor version bump)
+   - `fix:` for bug fixes (patch version bump)
+   - `feat!:` or `BREAKING CHANGE:` for breaking changes (major version bump)
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
