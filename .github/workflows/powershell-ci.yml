@@ -37,6 +37,8 @@ jobs:
   build-and-test:
     name: Build and Test
     runs-on: windows-latest
+    permissions:
+      contents: read
     
     steps:
       - name: Checkout repository
@@ -112,6 +114,8 @@ jobs:
     needs: build-and-test
     runs-on: windows-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
     
     steps:
       - name: Checkout repository
