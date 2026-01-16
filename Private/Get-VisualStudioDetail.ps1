@@ -24,13 +24,15 @@ function Get-VisualStudioDetail {
             # If release version not found, fallback to preview version
             if (-not $vsLocation) {
                 $vsLocation = $vsLocationDetails | Where-Object { $_.channelId -like "*Preview" }
-                $usedPreviewFallback = $true
+                if ($vsLocation) {
+                    $usedPreviewFallback = $true
+                }
             }
         }
 
         # Handle case where no installation is found
         if (-not $vsLocation) {
-            return $null, $null, $usedPreviewFallback
+            return $null, $null, $false
         }
 
         return ("$($vsLocation.installationPath)\Common7\Tools\Launch-VsDevShell.ps1"), ($vsLocation.displayName), $usedPreviewFallback
